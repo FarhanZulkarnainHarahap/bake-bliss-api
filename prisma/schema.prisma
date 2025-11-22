@@ -11,7 +11,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 model User {
@@ -24,7 +23,7 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relasi
-  product Product[] @relation("UserKue")
+  product Product[] @relation("UserProduct")
 }
 
 model Product {
@@ -38,7 +37,7 @@ model Product {
 
   // Relasi ke user (siapa yang menambahkan)
   authorId String?
-  author   User?   @relation("UserKue", fields: [authorId], references: [id])
+  author   User?   @relation("UserProduct", fields: [authorId], references: [id])
 }
 
 enum Role {
