@@ -13,8 +13,11 @@ app.use(cors());
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
-app.get("/", (_req: Request, res: Response) => {
-  res.send("🍰 API Jual Kue berjalan dengan baik!");
+app.get("/api/health", async (_request: Request, response: Response) => {
+  response.status(200).json({
+    message: "API is running",
+    uptime: `${process.uptime().toFixed(2)} seconds`,
+  });
 });
 app.listen(PORT, () => {
   console.info(`Server is listening on port: ${PORT}`);
