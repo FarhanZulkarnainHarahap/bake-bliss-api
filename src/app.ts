@@ -4,8 +4,6 @@ import cors from "cors";
 
 import authRouter from "./routers/auth-router.js";
 
-import prisma from "./configs/prisma.js";
-
 const app: Application = express();
 
 const PORT: string = process.env.PORT || "8000";
