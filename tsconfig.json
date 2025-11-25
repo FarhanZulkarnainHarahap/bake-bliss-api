@@ -3,6 +3,12 @@
     "target": "ESNext",
     "module": "NodeNext",
     "moduleResolution": "nodenext",
+    "rootDir": "./",
+
+    "baseUrl": "./src",
+    "paths": {
+      "@/*": ["*"]
+    },
     "outDir": "dist",
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
