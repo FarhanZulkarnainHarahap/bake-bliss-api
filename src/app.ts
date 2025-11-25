@@ -18,7 +18,12 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.get("/api/health", async (_request: Request, response: Response) => {
-  response.send("API is running...");
+  try {
+    response.send("API is running...");
+  } catch (error) {
+    console.error(error);
+    response.status(500).json({ message: "Terjadi kesalahan pada server" });
+  }
 });
 app.listen(PORT, () => {
   console.info(`Server is listening on port: ${PORT}`);
