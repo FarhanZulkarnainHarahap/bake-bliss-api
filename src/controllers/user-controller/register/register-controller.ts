@@ -5,7 +5,7 @@ import { prisma } from "../../../configs/prisma.js";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, role } = req.body;
 
     // validasi input
     if (!name || !email || !password) {
@@ -27,7 +27,7 @@ export const register = async (req: Request, res: Response) => {
         name,
         email,
         password: hashedPassword,
-        role: "USER", // default
+        role, // default
       },
       select: {
         id: true,
