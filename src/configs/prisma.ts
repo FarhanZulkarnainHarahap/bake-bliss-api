@@ -20,7 +20,7 @@ import pkg from "pg";
 
 const { Pool } = pkg;
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DIRECT_URL,
 });
 
 const globalForPrisma = globalThis as unknown as {

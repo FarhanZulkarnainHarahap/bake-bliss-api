@@ -7,6 +7,7 @@ export default defineConfig({
     path: "prisma/migrations",
   },
   datasource: {
-    url: env("DATABASE_URL"), // WAJIB ADA
+    url: env("DIRECT_URL"), // runtime URL
+    // WAJIB ADA
   },
 });
