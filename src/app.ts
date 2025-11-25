@@ -1,7 +1,7 @@
 import "dotenv/config";
 import cors from "cors";
 import express, { Request, Response, Application } from "express";
-
+import cookieParser from "cookie-parser";
 import authRouter from "./routers/auth-router.js";
 
 const app: Application = express();
@@ -15,6 +15,7 @@ app.use(
   })
 );
 app.use(express.json());
+app.use(cookieParser());
 
 app.use("/api/auth", authRouter);
 app.get("/", async (_req: Request, res: Response) => {
