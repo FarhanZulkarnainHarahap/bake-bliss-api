@@ -18,10 +18,7 @@ app.use(express.json());
 
 app.use("/api/auth", authRouter);
 app.get("/api/health", async (_request: Request, response: Response) => {
-  response.status(200).json({
-    message: "API is running",
-    uptime: `${process.uptime().toFixed(2)} seconds`,
-  });
+  response.send("API is running...");
 });
 app.listen(PORT, () => {
   console.info(`Server is listening on port: ${PORT}`);
