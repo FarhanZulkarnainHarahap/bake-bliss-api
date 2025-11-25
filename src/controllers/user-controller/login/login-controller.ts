@@ -7,20 +7,21 @@ export async function login(req: Request, res: Response) {
     const { email, password } = req.body;
     // validasi input
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email dan password wajib diisi" });
+      res.status(400).json({ message: "Email dan password wajib diisi" });
+      return;
     }
 
     // cari user berdasarkan email
     const user = await prisma.user.findUnique({ where: { email } });
     if (!user) {
-      return res.status(400).json({ message: "Email atau password salah" });
+      res.status(400).json({ message: "Email atau password salah" });
+      return;
     }
     // cek password
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
-      return res.status(400).json({ message: "Email atau password salah" });
+      res.status(400).json({ message: "Email atau password salah" });
+      return;
     }
 
     // login berhasil

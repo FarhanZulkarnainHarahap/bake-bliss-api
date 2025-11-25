@@ -5,17 +5,19 @@ import { prisma } from "../../../configs/prisma.js";
 
 export const register = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password } = req.body;
 
     // validasi input
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Semua field wajib diisi" });
+      res.status(400).json({ message: "Semua field wajib diisi" });
+      return;
     }
 
     // cek apakah email sudah terdaftar
     const existingUser = await prisma.user.findUnique({ where: { email } });
     if (existingUser) {
-      return res.status(400).json({ message: "Email sudah digunakan" });
+      res.status(400).json({ message: "Email sudah digunakan" });
+      return;
     }
 
     // hash password
@@ -27,7 +29,7 @@ export const register = async (req: Request, res: Response) => {
         name,
         email,
         password: hashedPassword,
-        role, // default
+        role: "USER", // default
       },
       select: {
         id: true,

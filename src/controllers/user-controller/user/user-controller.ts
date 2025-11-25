@@ -1,20 +1,28 @@
 import type { Request, Response } from "express";
 import { prisma } from "../../../configs/prisma.js";
-import {
-  AuthRequest,
-  verifyToken,
-} from "../../../middleware/auth-middleware.js";
+import { verifyToken } from "../../../middleware/auth-middleware.js";
+import { CustomJwtPayload } from "@/types/expres.js";
+import jwt from "jsonwebtoken";
 
-export async function getUserProfile(req: AuthRequest, res: Response) {
+export async function getUserProfile(req: Request, res: Response) {
   try {
-    const userId = req.user?.id; // dari token
+    const accessToken = req.cookies.accessToken;
 
-    if (!userId) {
-      return res.status(400).json({ message: "User ID not found in token" });
+    if (!accessToken) {
+      res.status(401).json({ message: "Unauthorized. No token provided." });
+      return;
     }
 
+    const decoded = jwt.verify(
+      accessToken,
+      process.env.JWT_SECRET!
+    ) as CustomJwtPayload;
+    if (!decoded || !decoded.id) {
+      res.status(401).json({ message: "Unauthorized. Invalid token." });
+      return;
+    }
     const user = await prisma.user.findUnique({
-      where: { id: userId },
+      where: { id: decoded.id },
       select: {
         id: true,
         name: true,
@@ -25,10 +33,11 @@ export async function getUserProfile(req: AuthRequest, res: Response) {
     });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      res.status(404).json({ message: "User not found." });
+      return;
     }
 
-    return res.json({
+    res.status(200).json({
       message: "Profile fetched successfully",
       data: user,
     });

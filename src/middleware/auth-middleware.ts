@@ -2,9 +2,6 @@ import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
 import { CustomJwtPayload } from "../types/expres.js"; // Pastikan Anda menyimpan CLIENT_ID di .env
 
-export interface AuthRequest extends Request {
-  user?: any;
-}
 export function verifyToken(req: Request, res: Response, next: NextFunction) {
   const accessToken = req.cookies.accessToken;
   if (!accessToken) {
