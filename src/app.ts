@@ -25,8 +25,8 @@ app.get("/", async (_request: Request, response: Response) => {
     response.status(500).json({ message: "Terjadi kesalahan pada server" });
   }
 });
-app.listen(PORT, () =>
-  console.info(` 🚀 Server is listening on port: ${PORT}`)
-);
+// app.listen(PORT, () =>
+//   console.info(` 🚀 Server is listening on port: ${PORT}`)
+// );
 
 export default app;
