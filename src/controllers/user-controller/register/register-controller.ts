@@ -43,6 +43,6 @@ export const register = async (req: Request, res: Response) => {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    res.status(500).json({ message: "Terjadi kesalahan pada server", error });
   }
 };
