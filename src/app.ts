@@ -17,7 +17,7 @@ app.use(
 app.use(express.json());
 
 app.use("/api/auth", authRouter);
-app.get("/api/health", async (_request: Request, response: Response) => {
+app.get("/", async (_request: Request, response: Response) => {
   try {
     response.send("API is running...");
   } catch (error) {
