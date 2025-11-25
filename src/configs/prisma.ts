@@ -19,7 +19,10 @@ import { PrismaClient } from "../generated/prisma/client.js";
 
 const connectionString = `${process.env.DATABASE_URL}`;
 
+const globalForPrisma = globalThis as unknown as {
+  prisma: PrismaClient | undefined;
+};
 const adapter = new PrismaPg({ connectionString });
-const prisma = new PrismaClient({ adapter });
+const prisma = globalForPrisma.prisma ?? new PrismaClient({ adapter });
 
 export { prisma };
