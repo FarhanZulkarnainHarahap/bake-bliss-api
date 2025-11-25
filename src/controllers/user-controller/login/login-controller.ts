@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { prisma } from "../../../configs/prisma.js";
 import bcrypt from "bcryptjs";
+import jw from "jsonwebtoken";
 
 export async function login(req: Request, res: Response) {
   try {
@@ -12,28 +13,51 @@ export async function login(req: Request, res: Response) {
     }
 
     // cari user berdasarkan email
-    const user = await prisma.user.findUnique({ where: { email } });
-    if (!user) {
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (!existingUser) {
       res.status(400).json({ message: "Email atau password salah" });
+      return;
+    }
+    if (!existingUser.password) {
+      res.status(400).json({ message: "User has no password set" });
       return;
     }
     // cek password
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-      res.status(400).json({ message: "Email atau password salah" });
+    const isValidPassword = await bcrypt.compare(
+      password,
+      existingUser.password
+    );
+    if (!isValidPassword) {
+      res.status(400).json({ message: "Invalid credentials" });
       return;
     }
 
-    // login berhasil
-    res.status(200).json({
-      message: "Login berhasil",
-      user: {
-        id: user.id,
-        name: user.name,
-        email: user.email,
-        role: user.role,
+    // Generate JWT token
+    const accesstoken = jw.sign(
+      {
+        id: existingUser.id,
+        username: existingUser.name,
+        email: existingUser.email,
+        role: existingUser.role,
       },
-    });
+      process.env.JWT_SECRET!
+    );
+
+    if (!accesstoken) {
+      res.status(500).json({ message: "Failed to generate token" });
+      return;
+    }
+
+    res
+      .cookie("accessToken", accesstoken, {
+        httpOnly: true,
+        secure: true, // wajib true untuk cross-origin HTTPS
+        sameSite: "none", // wajib none agar cookie dikirim lintas origin
+        path: "/",
+        maxAge: 7 * 24 * 60 * 60 * 1000,
+      })
+      .status(200)
+      .json({ message: "Login success" });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: "Terjadi kesalahan pada server" });
