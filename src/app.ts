@@ -10,7 +10,7 @@ const app: Application = express();
 const PORT: number = (process.env.PORT as unknown as number) || 8000;
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://bake-bliss.app"], // Menambahkan localhost untuk development
+    origin: ["http://localhost:3000", "https://bake-bliss.vercel.app"], // Menambahkan localhost untuk development
     methods: ["GET", "POST", "PUT", "DELETE"], // Atur metode HTTP yang diizinkan
     credentials: true, // Mengizinkan pengiriman cookies dan headers
   })
