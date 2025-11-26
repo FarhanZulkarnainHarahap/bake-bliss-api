@@ -3,6 +3,7 @@ import cors from "cors";
 import express, { Request, Response, Application } from "express";
 import cookieParser from "cookie-parser";
 import authRouter from "./routers/auth-router.js";
+import userRouter from "./routers/user-router.js";
 
 const app: Application = express();
 
@@ -17,7 +18,6 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
-app.use("/api/auth", authRouter);
 app.get("/", async (_req: Request, res: Response) => {
   try {
     res.send("API is running...");
@@ -26,6 +26,9 @@ app.get("/", async (_req: Request, res: Response) => {
     res.status(500).json({ message: "Terjadi kesalahan pada server" });
   }
 });
+
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
 app.listen(PORT, () =>
   console.info(` 🚀 Server is listening on port: http://localhost:${PORT}`)
 );
