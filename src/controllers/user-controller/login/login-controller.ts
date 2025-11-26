@@ -51,10 +51,9 @@ export async function login(req: Request, res: Response) {
     res
       .cookie("accessToken", accesstoken, {
         httpOnly: true,
-        secure: true, // wajib true untuk cross-origin HTTPS
-        sameSite: "none", // wajib none agar cookie dikirim lintas origin
-        path: "/",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "none", // PENTING kalau beda domain
+        path: "/", // supaya dikirim ke semua path
       })
       .status(200)
       .json({ message: "Login success" });
