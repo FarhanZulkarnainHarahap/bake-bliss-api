@@ -4,6 +4,7 @@ import express, { Request, Response, Application } from "express";
 import cookieParser from "cookie-parser";
 import authRouter from "./routers/auth-router.js";
 import userRouter from "./routers/user-router.js";
+import productsRouter from "./routers/product-router.js";
 
 const app: Application = express();
 
@@ -29,6 +30,7 @@ app.get("/", async (_req: Request, res: Response) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
+app.use("/api/products", productsRouter);
 app.listen(PORT, () =>
   console.info(` 🚀 Server is listening on port: http://localhost:${PORT}`)
 );

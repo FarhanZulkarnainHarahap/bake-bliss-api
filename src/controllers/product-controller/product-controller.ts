@@ -1,7 +1,7 @@
 import type { Request, Response } from "express";
 import fs from "fs";
 import { prisma } from "../../configs/prisma.js";
-import { cloudinary } from "../../configs/cloudinary.js";
+import { cloudinary } from "../../configs/cloudinary-config.js";
 
 type MulterRequest = Request & {
   file?: Express.Multer.File;
