@@ -1,175 +1,290 @@
 import type { Request, Response } from "express";
-import fs from "fs";
+import fs from "fs/promises";
 import { prisma } from "../../configs/prisma.js";
 import { cloudinary } from "../../configs/cloudinary-config.js";
 
-type MulterRequest = Request & {
-  file?: Express.Multer.File;
-};
-
-// Upload file local → Cloudinary
-async function uploadToCloudinary(filePath: string) {
-  return cloudinary.uploader.upload(filePath, {
-    folder: "bake-bliss/products",
-  });
-}
-
-// Remove file local setelah upload
-function deleteLocalFile(filePath: string) {
-  fs.unlink(filePath, (err) => {
-    if (err) console.log("Failed to delete local file:", err);
-  });
-}
-
-// ================================================
-// POST /api/products — Create Product
-// ================================================
-export async function createProduct(req: MulterRequest, res: Response) {
+export async function createOneProduct(req: Request, res: Response) {
   try {
     const { name, description, price } = req.body;
+    const files = req.files as {
+      [key: string]: Express.Multer.File[];
+    };
 
-    if (!name || !price) {
-      res.status(400).json({ message: "name dan price wajib diisi" });
+    if (!name || !description || !price || !files) {
+      res.status(400).json({ message: "Missing required fields" });
       return;
     }
 
-    let imageUrl: string | null = null;
+    const imagePreviewData: { url: string }[] = [];
+    const imageContentData: { url: string }[] = [];
 
-    if (req.file) {
-      const upload = await uploadToCloudinary(req.file.path);
-      imageUrl = upload.secure_url;
+    for (const key in files) {
+      for (const el of files[key]) {
+        const result = await cloudinary.uploader.upload(el.path, {
+          folder: "Events-mini-project",
+        });
 
-      deleteLocalFile(req.file.path);
+        const img = { url: result.secure_url };
+
+        if (key === "imagePreview") {
+          imagePreviewData.push(img);
+        } else if (key === "imageContent") {
+          imageContentData.push(img);
+        }
+
+        await fs.unlink(el.path);
+      }
     }
+
+    // Susun data untuk nested create ProductImage
+    const productImagesData = [
+      ...imagePreviewData.map((image) => ({
+        url: image.url, // WAJIB untuk ProductImage
+        ImagePreview: {
+          create: {
+            url: image.url, // untuk tabel Image
+          },
+        },
+      })),
+      ...imageContentData.map((image) => ({
+        url: image.url, // WAJIB untuk ProductImage
+        ImageContent: {
+          create: {
+            url: image.url, // untuk tabel Image
+          },
+        },
+      })),
+    ];
 
     const product = await prisma.product.create({
       data: {
         name,
         description,
         price: Number(price),
-        imageUrl,
+        productImages: {
+          create: productImagesData,
+        },
+      },
+      // optional: kalau mau langsung lihat relation-nya
+      include: {
+        productImages: {
+          include: {
+            ImagePreview: true,
+            ImageContent: true,
+          },
+        },
       },
     });
 
-    res.status(201).json({
-      message: "Product created successfully",
-      data: product,
-    });
+    res.status(201).json({ message: "Event was Created", data: product });
+    console.log("Created product", product);
   } catch (error) {
-    console.error("Create product error:", error);
-    res.status(500).json({ message: "Server error", error });
+    console.error(error);
+    res.status(500).json({ message: "Failed to create event" });
   }
 }
 
-// ================================================
-// GET ALL /api/products
-// ================================================
-export async function getAllProducts(_req: Request, res: Response) {
+/**
+ * GET ALL PRODUCTS
+ */
+export async function getAllProducts(req: Request, res: Response) {
   try {
     const products = await prisma.product.findMany({
       orderBy: { createdAt: "desc" },
+      include: {
+        productImages: {
+          include: {
+            ImagePreview: true,
+            ImageContent: true,
+          },
+        },
+      },
     });
 
     res.status(200).json({
-      message: "Products fetched",
+      message: "Success get all products",
       data: products,
     });
   } catch (error) {
-    console.error("Get products error:", error);
-    res.status(500).json({ message: "Server error", error });
+    console.error(error);
+    res.status(500).json({ message: "Failed to get products" });
   }
 }
 
-// ================================================
-// GET ONE /api/products/:id
-// ================================================
-export async function getProductById(req: Request, res: Response) {
+/**
+ * GET ONE PRODUCT BY ID
+ */
+export async function getOneProductById(req: Request, res: Response) {
   try {
+    const { id } = req.params;
+
     const product = await prisma.product.findUnique({
-      where: { id: req.params.id },
+      where: { id },
+      include: {
+        productImages: {
+          include: {
+            ImagePreview: true,
+            ImageContent: true,
+          },
+        },
+      },
     });
 
     if (!product) {
-      res.status(404).json({ message: "Produk tidak ditemukan" });
-      return;
-    }
-
-    res.status(200).json({
-      message: "Product fetched",
-      data: product,
-    });
-  } catch (error) {
-    console.error("Get product by id error:", error);
-    res.status(500).json({ message: "Server error", error });
-  }
-}
-
-// ================================================
-// PUT /api/products/:id — Update Product
-// ================================================
-export async function updateProduct(req: MulterRequest, res: Response) {
-  try {
-    const { name, description, price } = req.body;
-
-    const existing = await prisma.product.findUnique({
-      where: { id: req.params.id },
-    });
-
-    if (!existing) {
       res.status(404).json({ message: "Product not found" });
       return;
     }
 
-    let imageUrl = existing.imageUrl;
+    res.status(200).json({
+      message: "Success get product",
+      data: product,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Failed to get product" });
+  }
+}
 
-    if (req.file) {
-      const upload = await uploadToCloudinary(req.file.path);
-      imageUrl = upload.secure_url;
+/**
+ * UPDATE PRODUCT (update basic fields + optional tambah gambar baru)
+ * Route contoh: PUT /products/:id
+ * Body: name?, description?, price?
+ * Files: imagePreview?, imageContent? (opsional, seperti create)
+ */
+export async function UpdateProduct(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const { name, description, price } = req.body;
+    const files = req.files as
+      | {
+          [key: string]: Express.Multer.File[];
+        }
+      | undefined;
 
-      deleteLocalFile(req.file.path);
+    // cek apakah product ada
+    const existingProduct = await prisma.product.findUnique({
+      where: { id },
+    });
+
+    if (!existingProduct) {
+      res.status(404).json({ message: "Product not found" });
+      return;
     }
 
-    const updated = await prisma.product.update({
-      where: { id: req.params.id },
+    // handle file jika ada (tambah images baru, tidak menghapus yang lama)
+    const imagePreviewData: { url: string }[] = [];
+    const imageContentData: { url: string }[] = [];
+
+    if (files) {
+      for (const key in files) {
+        for (const el of files[key]) {
+          const result = await cloudinary.uploader.upload(el.path, {
+            folder: "Events-mini-project",
+          });
+
+          const img = { url: result.secure_url };
+
+          if (key === "imagePreview") {
+            imagePreviewData.push(img);
+          } else if (key === "imageContent") {
+            imageContentData.push(img);
+          }
+
+          await fs.unlink(el.path);
+        }
+      }
+    }
+
+    const productImagesCreateData =
+      imagePreviewData.length === 0 && imageContentData.length === 0
+        ? undefined
+        : [
+            ...imagePreviewData.map((image) => ({
+              url: image.url,
+              ImagePreview: {
+                create: {
+                  url: image.url,
+                },
+              },
+            })),
+            ...imageContentData.map((image) => ({
+              url: image.url,
+              ImageContent: {
+                create: {
+                  url: image.url,
+                },
+              },
+            })),
+          ];
+
+    const updatedProduct = await prisma.product.update({
+      where: { id },
       data: {
-        name: name ?? existing.name,
-        description: description ?? existing.description,
-        price: price ? Number(price) : existing.price,
-        imageUrl,
+        name: name ?? existingProduct.name,
+        description: description ?? existingProduct.description,
+        price:
+          price !== undefined ? Number(price) : Number(existingProduct.price),
+        productImages: productImagesCreateData
+          ? {
+              create: productImagesCreateData,
+            }
+          : undefined,
+      },
+      include: {
+        productImages: {
+          include: {
+            ImagePreview: true,
+            ImageContent: true,
+          },
+        },
       },
     });
 
     res.status(200).json({
       message: "Product updated",
-      data: updated,
+      data: updatedProduct,
     });
   } catch (error) {
-    console.error("Update product error:", error);
-    res.status(500).json({ message: "Server error", error });
+    console.error(error);
+    res.status(500).json({ message: "Failed to update product" });
   }
 }
 
-// ================================================
-// DELETE /api/products/:id
-// ================================================
-export async function deleteProduct(req: Request, res: Response) {
+/**
+ * DELETE ONE PRODUCT
+ * (delete productImages dulu, baru product)
+ * Route: DELETE /products/:id
+ */
+export async function deleteOneProduct(req: Request, res: Response) {
   try {
-    const existing = await prisma.product.findUnique({
-      where: { id: req.params.id },
+    const { id } = req.params;
+
+    // cek ada atau tidak
+    const product = await prisma.product.findUnique({
+      where: { id },
+      include: {
+        productImages: true,
+      },
     });
 
-    if (!existing) {
+    if (!product) {
       res.status(404).json({ message: "Product not found" });
       return;
     }
 
+    // hapus semua ProductImage yang terkait
+    await prisma.productImage.deleteMany({
+      where: { productId: id },
+    });
+
+    // hapus product
     await prisma.product.delete({
-      where: { id: req.params.id },
+      where: { id },
     });
 
     res.status(200).json({ message: "Product deleted" });
   } catch (error) {
-    console.error("Delete product error:", error);
-    res.status(500).json({ message: "Server error", error });
+    console.error(error);
+    res.status(500).json({ message: "Failed to delete product" });
   }
 }

@@ -25,3 +25,16 @@ export function verifyToken(req: Request, res: Response, next: NextFunction) {
     res.status(403).json({ message: "Invalid token" });
   }
 }
+
+export function roleGuard(...roles: string[]) {
+  return async function (req: Request, res: Response, next: NextFunction) {
+    const user = req.user;
+
+    if (roles.includes(user?.role)) {
+      next();
+      return;
+    }
+
+    res.status(403).json({ message: "Unauthorized access" });
+  };
+}

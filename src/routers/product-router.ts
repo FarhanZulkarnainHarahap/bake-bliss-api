@@ -1,40 +1,43 @@
 import express from "express";
 import { fileUpload } from "../middleware/file-upload-middleware.js";
-import { verifyToken } from "../middleware/auth-middleware.js";
+import { roleGuard, verifyToken } from "../middleware/auth-middleware.js";
 
 import {
-  createProduct,
+  createOneProduct,
+  deleteOneProduct,
   getAllProducts,
-  getProductById,
-  updateProduct,
-  deleteProduct,
+  getOneProductById,
+  UpdateProduct,
 } from "../controllers/product-controller/product-controller.js";
 
 const router = express.Router();
 
-// GET all
-router.get("/", verifyToken, getAllProducts);
-
 // CREATE
-router.post(
-  "/",
-  verifyToken,
-  fileUpload.single("image"), // ← pakai diskStorage upload
-  createProduct
-);
+router
+  .route("/")
+  .get(getAllProducts)
+  .post(
+    verifyToken,
+    roleGuard("ADMIN"),
+    fileUpload.fields([
+      { name: "imagePreview", maxCount: 3 },
+      { name: "imageContent", maxCount: 3 },
+    ]),
+    createOneProduct
+  );
 
-// GET by ID
-router.get("/:id", verifyToken, getProductById);
-
-// UPDATE
-router.put(
-  "/:id",
-  verifyToken,
-  fileUpload.single("image"), // optional update image
-  updateProduct
-);
-
-// DELETE
-router.delete("/:id", verifyToken, deleteProduct);
+router
+  .route("/:id")
+  .get(getOneProductById)
+  .put(
+    verifyToken,
+    roleGuard("ADMIN"),
+    fileUpload.fields([
+      { name: "imagePreview", maxCount: 3 },
+      { name: "imageContent", maxCount: 3 },
+    ]),
+    UpdateProduct
+  )
+  .delete(verifyToken, roleGuard("ADMIN"), deleteOneProduct);
 
 export default router;

@@ -27,3 +27,13 @@ export type User = Prisma.UserModel
  * 
  */
 export type Product = Prisma.ProductModel
+/**
+ * Model ProductImage
+ * 
+ */
+export type ProductImage = Prisma.ProductImageModel
+/**
+ * Model Image
+ * 
+ */
+export type Image = Prisma.ImageModel
