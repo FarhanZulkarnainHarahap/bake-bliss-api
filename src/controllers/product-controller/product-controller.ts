@@ -21,7 +21,7 @@ export async function createOneProduct(req: Request, res: Response) {
     for (const key in files) {
       for (const el of files[key]) {
         const result = await cloudinary.uploader.upload(el.path, {
-          folder: "Events-mini-project",
+          folder: "Bake-bliss-products",
         });
 
         const img = { url: result.secure_url };
