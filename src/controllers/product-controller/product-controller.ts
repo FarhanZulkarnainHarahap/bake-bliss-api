@@ -53,7 +53,9 @@ export async function createOneProduct(req: Request, res: Response) {
         },
       },
     });
-
+    if (!product) {
+      res.status(400).json({ mesage: "ada data yang kosong" });
+    }
     res.status(201).json({ message: "product was Created", data: product });
     console.log("Created product", product);
   } catch (error) {
