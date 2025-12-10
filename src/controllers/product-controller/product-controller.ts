@@ -43,33 +43,13 @@ export async function createOneProduct(req: Request, res: Response) {
         price: Number(price),
         productImages: {
           create: [
-            // untuk image preview
             ...imagePreviewData.map((image) => ({
-              url: image.url, // ✅ WAJIB untuk ProductImage
-              ImagePreview: {
-                create: {
-                  url: image.url, // data ke tabel Image
-                },
-              },
+              ImagePreview: { create: image },
             })),
-            // untuk image content
             ...imageContentData.map((image) => ({
-              url: image.url, // ✅ WAJIB untuk ProductImage
-              ImageContent: {
-                create: {
-                  url: image.url, // data ke tabel Image
-                },
-              },
+              ImageContent: { create: image },
             })),
           ],
-        },
-      },
-      include: {
-        productImages: {
-          include: {
-            ImagePreview: true,
-            ImageContent: true,
-          },
         },
       },
     });

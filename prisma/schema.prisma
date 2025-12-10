@@ -42,7 +42,6 @@ model Product {
 
 model ProductImage {
   id             String    @id @default(uuid())
-  url            String
   productId      String
   imagePreviewId String?
   imageContentId String?
