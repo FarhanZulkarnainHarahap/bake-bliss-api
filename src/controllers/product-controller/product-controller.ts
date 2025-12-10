@@ -21,7 +21,7 @@ export async function createOneProduct(req: Request, res: Response) {
     for (const key in files) {
       for (const el of files[key]) {
         const result = await cloudinary.uploader.upload(el.path, {
-          folder: "Bake-bliss-products",
+          folder: "bake-bliss/products",
         });
 
         const img = { url: result.secure_url };
@@ -76,11 +76,11 @@ export async function createOneProduct(req: Request, res: Response) {
       },
     });
 
-    res.status(201).json({ message: "Event was Created", data: product });
+    res.status(201).json({ message: "product was Created", data: product });
     console.log("Created product", product);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to create event" });
+    console.log(error);
+    res.status(500).json({ message: "Failed to create product" });
   }
 }
 
