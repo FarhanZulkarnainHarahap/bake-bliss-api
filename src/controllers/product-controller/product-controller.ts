@@ -36,36 +36,34 @@ export async function createOneProduct(req: Request, res: Response) {
       }
     }
 
-    // Susun data untuk nested create ProductImage
-    const productImagesData = [
-      ...imagePreviewData.map((image) => ({
-        url: image.url, // WAJIB untuk ProductImage
-        ImagePreview: {
-          create: {
-            url: image.url, // untuk tabel Image
-          },
-        },
-      })),
-      ...imageContentData.map((image) => ({
-        url: image.url, // WAJIB untuk ProductImage
-        ImageContent: {
-          create: {
-            url: image.url, // untuk tabel Image
-          },
-        },
-      })),
-    ];
-
     const product = await prisma.product.create({
       data: {
         name,
         description,
         price: Number(price),
         productImages: {
-          create: productImagesData,
+          create: [
+            // untuk image preview
+            ...imagePreviewData.map((image) => ({
+              url: image.url, // ✅ WAJIB untuk ProductImage
+              ImagePreview: {
+                create: {
+                  url: image.url, // data ke tabel Image
+                },
+              },
+            })),
+            // untuk image content
+            ...imageContentData.map((image) => ({
+              url: image.url, // ✅ WAJIB untuk ProductImage
+              ImageContent: {
+                create: {
+                  url: image.url, // data ke tabel Image
+                },
+              },
+            })),
+          ],
         },
       },
-      // optional: kalau mau langsung lihat relation-nya
       include: {
         productImages: {
           include: {
