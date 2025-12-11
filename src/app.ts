@@ -16,6 +16,7 @@ app.use(
     credentials: true, // Mengizinkan pengiriman cookies dan headers
   })
 );
+app.options("*", cors());
 app.use(express.json());
 app.use(cookieParser());
 
