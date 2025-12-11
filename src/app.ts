@@ -17,6 +17,7 @@ app.use(
 );
 app.options("*", cors());
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 app.get("/", async (_req: Request, res: Response) => {
