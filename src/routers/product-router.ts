@@ -34,7 +34,7 @@ router
   .put(
     verifyToken,
     roleGuard("ADMIN"),
-    fileUpload.fields([
+    upload.fields([
       { name: "imagePreview", maxCount: 3 },
       { name: "imageContent", maxCount: 3 },
     ]),
