@@ -9,8 +9,10 @@ import {
   getOneProductById,
   UpdateProduct,
 } from "../controllers/product-controller/product-controller.js";
-
 const router = express.Router();
+
+import multer from "multer";
+const upload = multer({ dest: "./public/assets/product" });
 
 // CREATE
 router
@@ -19,7 +21,7 @@ router
   .post(
     verifyToken,
     roleGuard("ADMIN"),
-    fileUpload.fields([
+    upload.fields([
       { name: "imagePreview", maxCount: 3 },
       { name: "imageContent", maxCount: 3 },
     ]),
