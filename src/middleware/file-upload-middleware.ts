@@ -4,7 +4,7 @@ import path from "path";
 export const fileUpload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, "public/image");
+      cb(null, "public/assets");
     },
     filename: (req, file, cb) => {
       const fileName = `${Date.now()}-${Math.random()
