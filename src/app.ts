@@ -6,8 +6,8 @@ import authRouter from "./routers/auth-router.js";
 import userRouter from "./routers/user-router.js";
 import productsRouter from "./routers/product-router.js";
 
-const app: Application = express();
 const PORT: number = (process.env.PORT as unknown as number) || 8000;
+const app: Application = express();
 app.use(
   cors({
     origin: ["http://localhost:3000", "https://bake-bliss.vercel.app"], // Menambahkan localhost untuk development
@@ -33,7 +33,5 @@ app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/products", productsRouter);
 
-app.listen(PORT, () =>
-  console.info(` 🚀 Server is listening on port: http://localhost:${PORT}`)
-);
+app.listen(PORT, () => console.info(` 🚀 Server is listening on port:${PORT}`));
 export default app;
