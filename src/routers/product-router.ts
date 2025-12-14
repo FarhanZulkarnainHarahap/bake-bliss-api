@@ -11,9 +11,6 @@ import {
 } from "../controllers/product-controller/product-controller.js";
 const router = express.Router();
 
-import multer from "multer";
-const upload = multer({ dest: "./public/assets/product" });
-
 // CREATE
 router
   .route("/")
@@ -21,7 +18,7 @@ router
   .post(
     verifyToken,
     roleGuard("ADMIN"),
-    upload.fields([
+    fileUpload.fields([
       { name: "imagePreview", maxCount: 3 },
       { name: "imageContent", maxCount: 3 },
     ]),
