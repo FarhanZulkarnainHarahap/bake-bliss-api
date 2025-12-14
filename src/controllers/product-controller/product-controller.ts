@@ -21,17 +21,16 @@ export async function createOneProduct(req: Request, res: Response) {
     for (const key in files) {
       for (const el of files[key]) {
         const result = await cloudinary.uploader.upload(el.path, {
-          folder: "bake-bliss/products",
+          folder: "bake-bliss",
         });
 
-        const img = { url: result.secure_url };
-
         if (key === "imagePreview") {
-          imagePreviewData.push(img);
-        } else if (key === "imageContent") {
-          imageContentData.push(img);
+          imagePreviewData.push({ url: result.secure_url });
         }
 
+        if (key == "imageContent") {
+          imageContentData.push({ url: result.secure_url });
+        }
         await fs.unlink(el.path);
       }
     }
