@@ -9,10 +9,10 @@ import {
   getOneProductById,
   UpdateProduct,
 } from "../controllers/product-controller/product-controller.js";
-const router = express.Router();
+const routers = express.Router();
 
 // CREATE
-router
+routers
   .route("/")
   .get(getAllProducts)
   .post(
@@ -25,13 +25,13 @@ router
     createOneProduct
   );
 
-router
+routers
   .route("/:id")
   .get(getOneProductById)
   .put(
     verifyToken,
     roleGuard("ADMIN"),
-    upload.fields([
+    fileUpload.fields([
       { name: "imagePreview", maxCount: 3 },
       { name: "imageContent", maxCount: 3 },
     ]),
@@ -39,4 +39,4 @@ router
   )
   .delete(verifyToken, roleGuard("ADMIN"), deleteOneProduct);
 
-export default router;
+export default routers;
