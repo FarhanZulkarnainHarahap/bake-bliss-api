@@ -79,28 +79,28 @@ export async function getAllProducts(req: Request, res: Response) {
       },
     });
 
-    const resultProducts = products.map((product) => {
-      const imagePreview: { id: string | null; url: string }[] = [];
-      const imageContent: { id: string | null; url: string }[] = [];
-      for (const el of product.productImages) {
-        if (el.ImageContent?.id && el.ImageContent?.url) {
-          imageContent.push({
-            id: el.ImageContent.id,
-            url: el.ImageContent.url,
-          });
-        }
+    // const resultProducts = products.map((product) => {
+    //   const imagePreview: { id: string | null; url: string }[] = [];
+    //   const imageContent: { id: string | null; url: string }[] = [];
+    //   for (const el of product.productImages) {
+    //     if (el.ImageContent?.id && el.ImageContent?.url) {
+    //       imageContent.push({
+    //         id: el.ImageContent.id,
+    //         url: el.ImageContent.url,
+    //       });
+    //     }
 
-        if (el.ImagePreview?.id && el.ImagePreview?.url) {
-          imagePreview.push({
-            id: el.ImagePreview.id || null,
-            url: el.ImagePreview.url,
-          });
-        }
-      }
-    });
+    //     if (el.ImagePreview?.id && el.ImagePreview?.url) {
+    //       imagePreview.push({
+    //         id: el.ImagePreview.id || null,
+    //         url: el.ImagePreview.url,
+    //       });
+    //     }
+    //   }
+    // });
     res.status(200).json({
       message: "Success get all products",
-      data: resultProducts,
+      data: products,
     });
   } catch (error) {
     console.error(error);

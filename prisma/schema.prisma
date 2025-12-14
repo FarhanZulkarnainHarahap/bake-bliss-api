@@ -35,8 +35,9 @@ model Product {
   updatedAt   DateTime @updatedAt
 
   // Relasi ke user (siapa yang menambahkan)
-  authorId      String?
-  author        User?          @relation("UserProduct", fields: [authorId], references: [id])
+  authorId String?
+  author   User?   @relation("UserProduct", fields: [authorId], references: [id])
+
   productImages ProductImage[]
 }
 
