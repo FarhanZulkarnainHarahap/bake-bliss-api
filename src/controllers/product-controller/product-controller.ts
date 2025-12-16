@@ -71,45 +71,71 @@ export async function createOneProduct(req: Request, res: Response) {
       | Record<string, Express.Multer.File[]>
       | undefined;
 
+    // description di schema optional, jadi jangan dipaksa wajib
     if (!name || !price) {
       return res
         .status(400)
         .json({ message: "Missing required fields: name, price" });
     }
 
-    if (!files) {
-      return res
-        .status(400)
-        .json({ message: "Files not found (multer not receiving uploads)" });
-    }
+    const previewFiles = files?.imagePreview ?? [];
+    const contentFiles = files?.imageContent ?? [];
 
-    // ambil file pertama (asumsi 1 preview & 1 content)
-    const previewFile = files["imagePreview"]?.[0];
-    const contentFile = files["imageContent"]?.[0];
-
-    if (!previewFile && !contentFile) {
-      return res
-        .status(400)
-        .json({ message: "At least one image is required (preview/content)" });
-    }
-
-    let previewUrl: string | undefined;
-    let contentUrl: string | undefined;
-
-    if (previewFile) {
-      const up = await cloudinary.uploader.upload(previewFile.path, {
-        folder: "bake-bliss",
+    // kalau dua-duanya kosong → reject
+    if (previewFiles.length === 0 && contentFiles.length === 0) {
+      return res.status(400).json({
+        message: "At least one image is required (preview/content)",
       });
-      previewUrl = up.secure_url;
-      await fs.unlink(previewFile.path);
     }
 
-    if (contentFile) {
-      const up = await cloudinary.uploader.upload(contentFile.path, {
-        folder: "bake-bliss",
+    // zip by index: preview[i] + content[i] -> 1 ProductImage row
+    const maxLen = Math.max(previewFiles.length, contentFiles.length);
+
+    const productImagesCreate: Array<{
+      ImagePreview?: { create: { url: string } };
+      ImageContent?: { create: { url: string } };
+    }> = [];
+
+    for (let i = 0; i < maxLen; i++) {
+      const p = previewFiles[i];
+      const c = contentFiles[i];
+
+      let previewUrl: string | undefined;
+      let contentUrl: string | undefined;
+
+      if (p) {
+        const up = await cloudinary.uploader.upload(p.path, {
+          folder: "bake-bliss",
+        });
+        previewUrl = up.secure_url;
+        await fs.unlink(p.path);
+      }
+
+      if (c) {
+        const up = await cloudinary.uploader.upload(c.path, {
+          folder: "bake-bliss",
+        });
+        contentUrl = up.secure_url;
+        await fs.unlink(c.path);
+      }
+
+      // jangan pernah push row kosong
+      if (!previewUrl && !contentUrl) continue;
+
+      productImagesCreate.push({
+        ...(previewUrl
+          ? { ImagePreview: { create: { url: previewUrl } } }
+          : {}),
+        ...(contentUrl
+          ? { ImageContent: { create: { url: contentUrl } } }
+          : {}),
       });
-      contentUrl = up.secure_url;
-      await fs.unlink(contentFile.path);
+    }
+
+    if (productImagesCreate.length === 0) {
+      return res.status(400).json({
+        message: "No valid images found after upload processing.",
+      });
     }
 
     const product = await prisma.product.create({
@@ -118,28 +144,25 @@ export async function createOneProduct(req: Request, res: Response) {
         description: description ?? null,
         price: Number(price),
         productImages: {
-          create: {
-            ...(previewUrl
-              ? { ImagePreview: { create: { url: previewUrl } } }
-              : {}),
-            ...(contentUrl
-              ? { ImageContent: { create: { url: contentUrl } } }
-              : {}),
-          },
+          create: productImagesCreate,
         },
       },
       include: {
         productImages: {
-          include: { ImagePreview: true, ImageContent: true },
+          include: {
+            ImagePreview: true,
+            ImageContent: true,
+          },
         },
       },
     });
 
-    return res
-      .status(201)
-      .json({ message: "product was Created", data: product });
+    return res.status(201).json({
+      message: "product was Created",
+      data: product,
+    });
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res.status(500).json({ message: "Failed to create product" });
   }
 }
