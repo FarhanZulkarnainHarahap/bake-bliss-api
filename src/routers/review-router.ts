@@ -1,14 +1,13 @@
-import { Router } from "express";
+import express from "express";
 import {
   createReview,
   deleteReview,
   getReviewById,
   getReviewsByProduct,
   updateReview,
-} from "@/controllers/review-controller/review-controller.js";
+} from "../controllers/review-controller/review-controller.js";
 
-const router = Router();
-
+const router = express.Router();
 // Create review
 router.post("/", createReview);
 
