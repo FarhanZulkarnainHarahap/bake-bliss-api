@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import authRouter from "./routers/auth-router.js";
 import userRouter from "./routers/user-router.js";
 import productsRouter from "./routers/product-router.js";
+import reviewRouter from "./routers/review-router.js";
 
 const PORT: number = (process.env.PORT as unknown as number) || 8000;
 const app: Application = express();
@@ -22,16 +23,26 @@ app.use(cookieParser());
 
 app.get("/", async (_req: Request, res: Response) => {
   try {
-    res.send("API is running...");
+    res.status(200).json({
+      success: true,
+      name: "BakeBliss API",
+      status: "RUNNING",
+      timestamp: new Date().toISOString(),
+      message: "🚀 API is running smoothly",
+    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Terjadi kesalahan pada server" });
+    res.status(500).json({
+      success: false,
+      message: "Terjadi kesalahan pada server",
+    });
   }
 });
 
 app.use("/api/auth", authRouter);
 app.use("/api/users", userRouter);
 app.use("/api/products", productsRouter);
+app.use("/api/reviews", reviewRouter);
 
 app.listen(PORT, () => console.info(` 🚀 Server is listening on port:${PORT}`));
 export default app;

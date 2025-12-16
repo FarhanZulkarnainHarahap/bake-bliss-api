@@ -53,6 +53,7 @@ export const AnyNull = runtime.AnyNull
 export const ModelName = {
   User: 'User',
   Product: 'Product',
+  Review: 'Review',
   ProductImage: 'ProductImage',
   Image: 'Image'
 } as const
@@ -97,6 +98,19 @@ export const ProductScalarFieldEnum = {
 } as const
 
 export type ProductScalarFieldEnum = (typeof ProductScalarFieldEnum)[keyof typeof ProductScalarFieldEnum]
+
+
+export const ReviewScalarFieldEnum = {
+  id: 'id',
+  message: 'message',
+  rating: 'rating',
+  userId: 'userId',
+  productId: 'productId',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type ReviewScalarFieldEnum = (typeof ReviewScalarFieldEnum)[keyof typeof ReviewScalarFieldEnum]
 
 
 export const ProductImageScalarFieldEnum = {

@@ -28,6 +28,11 @@ export type User = Prisma.UserModel
  */
 export type Product = Prisma.ProductModel
 /**
+ * Model Review
+ * 
+ */
+export type Review = Prisma.ReviewModel
+/**
  * Model ProductImage
  * 
  */

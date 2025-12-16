@@ -24,6 +24,7 @@ model User {
 
   // Relasi
   product Product[] @relation("UserProduct")
+  reviews Review[] // ✅ user punya banyak review
 }
 
 model Product {
@@ -39,6 +40,26 @@ model Product {
   author   User?   @relation("UserProduct", fields: [authorId], references: [id])
 
   productImages ProductImage[]
+  reviews       Review[] // ✅ product punya banyak review
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  message   String // ✅ isi komentar
+  rating    Int? // opsional (misal 1-5), kalau gak butuh hapus aja
+  userId    String
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relasi
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  // kalau mau 1 user cuma boleh 1 review per product, aktifkan ini:
+  // @@unique([userId, productId])
+
+  @@index([userId])
+  @@index([productId])
 }
 
 model ProductImage {
