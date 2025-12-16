@@ -70,12 +70,7 @@ export async function getAllProducts(req: Request, res: Response) {
   try {
     const products = await prisma.product.findMany({
       include: {
-        productImages: {
-          include: {
-            ImagePreview: true,
-            ImageContent: true,
-          },
-        },
+        productImages: true,
       },
     });
 
