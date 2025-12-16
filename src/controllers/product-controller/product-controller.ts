@@ -3,16 +3,78 @@ import fs from "fs/promises";
 import { prisma } from "../../configs/prisma.js";
 import { cloudinary } from "../../configs/cloudinary-config.js";
 
+// export async function createOneProduct(req: Request, res: Response) {
+//   try {
+//     const { name, description, price } = req.body;
+//     const files = req.files as {
+//       [key: string]: Express.Multer.File[];
+//     };
+
+//     if (!name || !description || !price || !files) {
+//       res.status(400).json({ message: "Missing required fields" });
+//       return;
+//     }
+
+//     const imagePreviewData: { url: string }[] = [];
+//     const imageContentData: { url: string }[] = [];
+
+//     for (const key in files) {
+//       for (const el of files[key]) {
+//         const result = await cloudinary.uploader.upload(el.path, {
+//           folder: "bake-bliss",
+//         });
+
+//         if (key === "imagePreview") {
+//           imagePreviewData.push({ url: result.secure_url });
+//         }
+
+//         if (key == "imageContent") {
+//           imageContentData.push({ url: result.secure_url });
+//         }
+//         await fs.unlink(el.path);
+//       }
+//     }
+
+//     const product = await prisma.product.create({
+//       data: {
+//         name,
+//         description,
+//         price: Number(price),
+//         productImages: {
+//           create: imagePreviewData.map((img, index) => ({
+//             url: img.url,
+//             ImagePreview: {
+//               create: {
+//                 url: img.url,
+//               },
+//             },
+//             ImageContent: {
+//               create: {
+//                 url: imageContentData[index]?.url || "",
+//               },
+//             },
+//           })),
+//         },
+//       },
+//     });
+//     if (!product) {
+//       res.status(400).json({ mesage: "ada data yang kosong" });
+//     }
+//     res.status(201).json({ message: "product was Created", data: product });
+//     console.log("Created product", product);
+//   } catch (error) {
+//     console.log(error);
+//     res.status(500).json({ message: "Failed to create product", error });
+//   }
+// }
+
 export async function createOneProduct(req: Request, res: Response) {
   try {
     const { name, description, price } = req.body;
-    const files = req.files as {
-      [key: string]: Express.Multer.File[];
-    };
+    const files = req.files as Record<string, Express.Multer.File[]>;
 
-    if (!name || !description || !price || !files) {
-      res.status(400).json({ message: "Missing required fields" });
-      return;
+    if (!name || !price || !files) {
+      return res.status(400).json({ message: "Missing required fields" });
     }
 
     const imagePreviewData: { url: string }[] = [];
@@ -24,138 +86,59 @@ export async function createOneProduct(req: Request, res: Response) {
           folder: "bake-bliss",
         });
 
-        if (key === "imagePreview") {
+        if (key === "imagePreview")
           imagePreviewData.push({ url: result.secure_url });
-        }
-
-        if (key == "imageContent") {
+        if (key === "imageContent")
           imageContentData.push({ url: result.secure_url });
-        }
+
         await fs.unlink(el.path);
       }
+    }
+
+    // Karena schema wajib dua-duanya:
+    if (imagePreviewData.length === 0 || imageContentData.length === 0) {
+      return res.status(400).json({
+        message: "imagePreview dan imageContent wajib diisi minimal 1",
+      });
+    }
+
+    if (imagePreviewData.length !== imageContentData.length) {
+      return res.status(400).json({
+        message: `Jumlah imagePreview (${imagePreviewData.length}) harus sama dengan imageContent (${imageContentData.length})`,
+      });
     }
 
     const product = await prisma.product.create({
       data: {
         name,
-        description,
+        description: description ?? null,
         price: Number(price),
         productImages: {
           create: imagePreviewData.map((img, index) => ({
-            url: img.url,
             ImagePreview: {
-              create: {
-                url: img.url,
-              },
+              create: { url: img.url },
             },
             ImageContent: {
-              create: {
-                url: imageContentData[index]?.url || "",
-              },
+              create: { url: imageContentData[index].url },
             },
           })),
         },
       },
+      include: {
+        productImages: {
+          include: { ImagePreview: true, ImageContent: true },
+        },
+      },
     });
-    if (!product) {
-      res.status(400).json({ mesage: "ada data yang kosong" });
-    }
-    res.status(201).json({ message: "product was Created", data: product });
-    console.log("Created product", product);
+
+    return res
+      .status(201)
+      .json({ message: "product was Created", data: product });
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to create product", error });
+    return res.status(500).json({ message: "Failed to create product", error });
   }
 }
-
-// async function cleanupUploadedFiles(
-//   files?: Record<string, Express.Multer.File[]>
-// ) {
-//   if (!files) return;
-//   const all = Object.values(files).flat();
-//   await Promise.allSettled(all.map((f) => fs.unlink(f.path)));
-// }
-
-// export async function createOneProduct(req: Request, res: Response) {
-//   const files = req.files as Record<string, Express.Multer.File[]> | undefined;
-
-//   try {
-//     const { name, description, price } = req.body;
-
-//     if (!name || !price) {
-//       await cleanupUploadedFiles(files);
-//       res.status(400).json({ message: "Missing required fields: name, price" });
-//     }
-
-//     const previewFiles = files?.imagePreview ?? [];
-//     const contentFiles = files?.imageContent ?? [];
-
-//     // karena schema mewajibkan dua-duanya, maka harus ada minimal 1 pasangan
-//     if (previewFiles.length === 0 || contentFiles.length === 0) {
-//       await cleanupUploadedFiles(files);
-//       res.status(400).json({
-//         message:
-//           "Both imagePreview and imageContent are required (at least 1 each).",
-//       });
-//     }
-
-//     // wajib sama jumlahnya supaya setiap row punya preview+content
-//     if (previewFiles.length !== contentFiles.length) {
-//       await cleanupUploadedFiles(files);
-//       res.status(400).json({
-//         message: `imagePreview count (${previewFiles.length}) must equal imageContent count (${contentFiles.length})`,
-//       });
-//     }
-
-//     const productImagesCreate: Array<{
-//       ImagePreview: { create: { url: string } };
-//       ImageContent: { create: { url: string } };
-//     }> = [];
-
-//     for (let i = 0; i < previewFiles.length; i++) {
-//       const p = previewFiles[i];
-//       const c = contentFiles[i];
-
-//       const upPreview = await cloudinary.uploader.upload(p.path, {
-//         folder: "bake-bliss",
-//       });
-//       const upContent = await cloudinary.uploader.upload(c.path, {
-//         folder: "bake-bliss",
-//       });
-
-//       // hapus file lokal
-//       await fs.unlink(p.path);
-//       await fs.unlink(c.path);
-
-//       productImagesCreate.push({
-//         ImagePreview: { create: { url: upPreview.secure_url } },
-//         ImageContent: { create: { url: upContent.secure_url } },
-//       });
-//     }
-
-//     const product = await prisma.product.create({
-//       data: {
-//         name,
-//         description: description ?? null,
-//         price: Number(price),
-//         productImages: {
-//           create: productImagesCreate,
-//         },
-//       },
-//       include: {
-//         productImages: {
-//           include: { ImagePreview: true, ImageContent: true },
-//         },
-//       },
-//     });
-
-//     res.status(201).json({ message: "product was created", data: product });
-//   } catch (error) {
-//     console.error(error);
-//     await cleanupUploadedFiles(files);
-//     res.status(500).json({ message: "Failed to create product" });
-//   }
-// }
 
 /**
  * GET ALL PRODUCTS
