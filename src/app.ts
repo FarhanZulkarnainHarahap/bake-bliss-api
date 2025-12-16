@@ -23,19 +23,16 @@ app.use(cookieParser());
 
 app.get("/", async (_req: Request, res: Response) => {
   try {
-    res.send({
-      success: true,
-      name: "BakeBliss API",
-      status: "RUNNING",
-      timestamp: new Date().toISOString(),
-      message: "🚀 API is running smoothly",
-    });
+    res.send(`
+====================================
+🚀  BAKEBLISS API
+✅  STATUS : RUNNING
+⏱️  TIME   : ${new Date().toISOString()}
+====================================
+`);
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      success: false,
-      message: "Terjadi kesalahan pada server",
-    });
+    res.status(500).json({ message: "Terjadi kesalahan pada server" });
   }
 });
 
