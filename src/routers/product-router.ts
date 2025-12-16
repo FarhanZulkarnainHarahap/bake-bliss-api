@@ -7,7 +7,6 @@ import {
   deleteOneProduct,
   getAllProducts,
   getOneProductById,
-  UpdateProduct,
 } from "../controllers/product-controller/product-controller.js";
 const routers = express.Router();
 
@@ -28,15 +27,15 @@ routers
 routers
   .route("/:id")
   .get(getOneProductById)
-  .put(
-    verifyToken,
-    roleGuard("ADMIN"),
-    fileUpload.fields([
-      { name: "imagePreview", maxCount: 3 },
-      { name: "imageContent", maxCount: 3 },
-    ]),
-    UpdateProduct
-  )
+  // .put(
+  //   verifyToken,
+  //   roleGuard("ADMIN"),
+  //   fileUpload.fields([
+  //     { name: "imagePreview", maxCount: 3 },
+  //     { name: "imageContent", maxCount: 3 },
+  //   ]),
+  //   UpdateProduct
+  // )
   .delete(verifyToken, roleGuard("ADMIN"), deleteOneProduct);
 
 export default routers;
