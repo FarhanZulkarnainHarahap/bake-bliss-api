@@ -79,9 +79,7 @@ export async function createOneProduct(req: Request, res: Response) {
 
     if (!name || !price) {
       await cleanupUploadedFiles(files);
-      return res
-        .status(400)
-        .json({ message: "Missing required fields: name, price" });
+      res.status(400).json({ message: "Missing required fields: name, price" });
     }
 
     const previewFiles = files?.imagePreview ?? [];
@@ -90,7 +88,7 @@ export async function createOneProduct(req: Request, res: Response) {
     // karena schema mewajibkan dua-duanya, maka harus ada minimal 1 pasangan
     if (previewFiles.length === 0 || contentFiles.length === 0) {
       await cleanupUploadedFiles(files);
-      return res.status(400).json({
+      res.status(400).json({
         message:
           "Both imagePreview and imageContent are required (at least 1 each).",
       });
@@ -99,7 +97,7 @@ export async function createOneProduct(req: Request, res: Response) {
     // wajib sama jumlahnya supaya setiap row punya preview+content
     if (previewFiles.length !== contentFiles.length) {
       await cleanupUploadedFiles(files);
-      return res.status(400).json({
+      res.status(400).json({
         message: `imagePreview count (${previewFiles.length}) must equal imageContent count (${contentFiles.length})`,
       });
     }
@@ -146,13 +144,11 @@ export async function createOneProduct(req: Request, res: Response) {
       },
     });
 
-    return res
-      .status(201)
-      .json({ message: "product was created", data: product });
+    res.status(201).json({ message: "product was created", data: product });
   } catch (error) {
     console.error(error);
     await cleanupUploadedFiles(files);
-    return res.status(500).json({ message: "Failed to create product" });
+    res.status(500).json({ message: "Failed to create product" });
   }
 }
 
@@ -217,104 +213,104 @@ export async function getOneProductById(req: Request, res: Response) {
  * Body: name?, description?, price?
  * Files: imagePreview?, imageContent? (opsional, seperti create)
  */
-export async function UpdateProduct(req: Request, res: Response) {
-  try {
-    const { id } = req.params;
-    const { name, description, price } = req.body;
-    const files = req.files as
-      | {
-          [key: string]: Express.Multer.File[];
-        }
-      | undefined;
+// export async function UpdateProduct(req: Request, res: Response) {
+//   try {
+//     const { id } = req.params;
+//     const { name, description, price } = req.body;
+//     const files = req.files as
+//       | {
+//           [key: string]: Express.Multer.File[];
+//         }
+//       | undefined;
 
-    // cek apakah product ada
-    const existingProduct = await prisma.product.findUnique({
-      where: { id },
-    });
+//     // cek apakah product ada
+//     const existingProduct = await prisma.product.findUnique({
+//       where: { id },
+//     });
 
-    if (!existingProduct) {
-      res.status(404).json({ message: "Product not found" });
-      return;
-    }
+//     if (!existingProduct) {
+//       res.status(404).json({ message: "Product not found" });
+//       return;
+//     }
 
-    // handle file jika ada (tambah images baru, tidak menghapus yang lama)
-    const imagePreviewData: { url: string }[] = [];
-    const imageContentData: { url: string }[] = [];
+//     // handle file jika ada (tambah images baru, tidak menghapus yang lama)
+//     const imagePreviewData: { url: string }[] = [];
+//     const imageContentData: { url: string }[] = [];
 
-    if (files) {
-      for (const key in files) {
-        for (const el of files[key]) {
-          const result = await cloudinary.uploader.upload(el.path, {
-            folder: "Events-mini-project",
-          });
+//     if (files) {
+//       for (const key in files) {
+//         for (const el of files[key]) {
+//           const result = await cloudinary.uploader.upload(el.path, {
+//             folder: "Events-mini-project",
+//           });
 
-          const img = { url: result.secure_url };
+//           const img = { url: result.secure_url };
 
-          if (key === "imagePreview") {
-            imagePreviewData.push(img);
-          } else if (key === "imageContent") {
-            imageContentData.push(img);
-          }
+//           if (key === "imagePreview") {
+//             imagePreviewData.push(img);
+//           } else if (key === "imageContent") {
+//             imageContentData.push(img);
+//           }
 
-          await fs.unlink(el.path);
-        }
-      }
-    }
+//           await fs.unlink(el.path);
+//         }
+//       }
+//     }
 
-    const productImagesCreateData =
-      imagePreviewData.length === 0 && imageContentData.length === 0
-        ? undefined
-        : [
-            ...imagePreviewData.map((image) => ({
-              url: image.url,
-              ImagePreview: {
-                create: {
-                  url: image.url,
-                },
-              },
-            })),
-            ...imageContentData.map((image) => ({
-              url: image.url,
-              ImageContent: {
-                create: {
-                  url: image.url,
-                },
-              },
-            })),
-          ];
+//     const productImagesCreateData =
+//       imagePreviewData.length === 0 && imageContentData.length === 0
+//         ? undefined
+//         : [
+//             ...imagePreviewData.map((image) => ({
+//               url: image.url,
+//               ImagePreview: {
+//                 create: {
+//                   url: image.url,
+//                 },
+//               },
+//             })),
+//             ...imageContentData.map((image) => ({
+//               url: image.url,
+//               ImageContent: {
+//                 create: {
+//                   url: image.url,
+//                 },
+//               },
+//             })),
+//           ];
 
-    const updatedProduct = await prisma.product.update({
-      where: { id },
-      data: {
-        name: name ?? existingProduct.name,
-        description: description ?? existingProduct.description,
-        price:
-          price !== undefined ? Number(price) : Number(existingProduct.price),
-        productImages: productImagesCreateData
-          ? {
-              create: productImagesCreateData,
-            }
-          : undefined,
-      },
-      include: {
-        productImages: {
-          include: {
-            ImagePreview: true,
-            ImageContent: true,
-          },
-        },
-      },
-    });
+//     const updatedProduct = await prisma.product.update({
+//       where: { id },
+//       data: {
+//         name: name ?? existingProduct.name,
+//         description: description ?? existingProduct.description,
+//         price:
+//           price !== undefined ? Number(price) : Number(existingProduct.price),
+//         productImages: productImagesCreateData
+//           ? {
+//               create: productImagesCreateData,
+//             }
+//           : undefined,
+//       },
+//       include: {
+//         productImages: {
+//           include: {
+//             ImagePreview: true,
+//             ImageContent: true,
+//           },
+//         },
+//       },
+//     });
 
-    res.status(200).json({
-      message: "Product updated",
-      data: updatedProduct,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Failed to update product" });
-  }
-}
+//     res.status(200).json({
+//       message: "Product updated",
+//       data: updatedProduct,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ message: "Failed to update product" });
+//   }
+// }
 
 /**
  * DELETE ONE PRODUCT
