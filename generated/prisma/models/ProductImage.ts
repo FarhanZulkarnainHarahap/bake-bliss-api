@@ -162,8 +162,8 @@ export type ProductImageGroupByArgs<ExtArgs extends runtime.Types.Extensions.Int
 export type ProductImageGroupByOutputType = {
   id: string
   productId: string
-  imagePreviewId: string | null
-  imageContentId: string | null
+  imagePreviewId: string
+  imageContentId: string
   createdAt: Date
   deleteAt: Date | null
   updatedAt: Date
@@ -193,21 +193,21 @@ export type ProductImageWhereInput = {
   NOT?: Prisma.ProductImageWhereInput | Prisma.ProductImageWhereInput[]
   id?: Prisma.StringFilter<"ProductImage"> | string
   productId?: Prisma.StringFilter<"ProductImage"> | string
-  imagePreviewId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
-  imageContentId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
+  imagePreviewId?: Prisma.StringFilter<"ProductImage"> | string
+  imageContentId?: Prisma.StringFilter<"ProductImage"> | string
   createdAt?: Prisma.DateTimeFilter<"ProductImage"> | Date | string
   deleteAt?: Prisma.DateTimeNullableFilter<"ProductImage"> | Date | string | null
   updatedAt?: Prisma.DateTimeFilter<"ProductImage"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-  ImagePreview?: Prisma.XOR<Prisma.ImageNullableScalarRelationFilter, Prisma.ImageWhereInput> | null
-  ImageContent?: Prisma.XOR<Prisma.ImageNullableScalarRelationFilter, Prisma.ImageWhereInput> | null
+  ImagePreview?: Prisma.XOR<Prisma.ImageScalarRelationFilter, Prisma.ImageWhereInput>
+  ImageContent?: Prisma.XOR<Prisma.ImageScalarRelationFilter, Prisma.ImageWhereInput>
 }
 
 export type ProductImageOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  imagePreviewId?: Prisma.SortOrderInput | Prisma.SortOrder
-  imageContentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagePreviewId?: Prisma.SortOrder
+  imageContentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deleteAt?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -222,21 +222,21 @@ export type ProductImageWhereUniqueInput = Prisma.AtLeast<{
   OR?: Prisma.ProductImageWhereInput[]
   NOT?: Prisma.ProductImageWhereInput | Prisma.ProductImageWhereInput[]
   productId?: Prisma.StringFilter<"ProductImage"> | string
-  imagePreviewId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
-  imageContentId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
+  imagePreviewId?: Prisma.StringFilter<"ProductImage"> | string
+  imageContentId?: Prisma.StringFilter<"ProductImage"> | string
   createdAt?: Prisma.DateTimeFilter<"ProductImage"> | Date | string
   deleteAt?: Prisma.DateTimeNullableFilter<"ProductImage"> | Date | string | null
   updatedAt?: Prisma.DateTimeFilter<"ProductImage"> | Date | string
   product?: Prisma.XOR<Prisma.ProductScalarRelationFilter, Prisma.ProductWhereInput>
-  ImagePreview?: Prisma.XOR<Prisma.ImageNullableScalarRelationFilter, Prisma.ImageWhereInput> | null
-  ImageContent?: Prisma.XOR<Prisma.ImageNullableScalarRelationFilter, Prisma.ImageWhereInput> | null
+  ImagePreview?: Prisma.XOR<Prisma.ImageScalarRelationFilter, Prisma.ImageWhereInput>
+  ImageContent?: Prisma.XOR<Prisma.ImageScalarRelationFilter, Prisma.ImageWhereInput>
 }, "id">
 
 export type ProductImageOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   productId?: Prisma.SortOrder
-  imagePreviewId?: Prisma.SortOrderInput | Prisma.SortOrder
-  imageContentId?: Prisma.SortOrderInput | Prisma.SortOrder
+  imagePreviewId?: Prisma.SortOrder
+  imageContentId?: Prisma.SortOrder
   createdAt?: Prisma.SortOrder
   deleteAt?: Prisma.SortOrderInput | Prisma.SortOrder
   updatedAt?: Prisma.SortOrder
@@ -251,8 +251,8 @@ export type ProductImageScalarWhereWithAggregatesInput = {
   NOT?: Prisma.ProductImageScalarWhereWithAggregatesInput | Prisma.ProductImageScalarWhereWithAggregatesInput[]
   id?: Prisma.StringWithAggregatesFilter<"ProductImage"> | string
   productId?: Prisma.StringWithAggregatesFilter<"ProductImage"> | string
-  imagePreviewId?: Prisma.StringNullableWithAggregatesFilter<"ProductImage"> | string | null
-  imageContentId?: Prisma.StringNullableWithAggregatesFilter<"ProductImage"> | string | null
+  imagePreviewId?: Prisma.StringWithAggregatesFilter<"ProductImage"> | string
+  imageContentId?: Prisma.StringWithAggregatesFilter<"ProductImage"> | string
   createdAt?: Prisma.DateTimeWithAggregatesFilter<"ProductImage"> | Date | string
   deleteAt?: Prisma.DateTimeNullableWithAggregatesFilter<"ProductImage"> | Date | string | null
   updatedAt?: Prisma.DateTimeWithAggregatesFilter<"ProductImage"> | Date | string
@@ -264,15 +264,15 @@ export type ProductImageCreateInput = {
   deleteAt?: Date | string | null
   updatedAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutProductImagesInput
-  ImagePreview?: Prisma.ImageCreateNestedOneWithoutImagePreviewInput
-  ImageContent?: Prisma.ImageCreateNestedOneWithoutImageContentInput
+  ImagePreview: Prisma.ImageCreateNestedOneWithoutImagePreviewInput
+  ImageContent: Prisma.ImageCreateNestedOneWithoutImageContentInput
 }
 
 export type ProductImageUncheckedCreateInput = {
   id?: string
   productId: string
-  imagePreviewId?: string | null
-  imageContentId?: string | null
+  imagePreviewId: string
+  imageContentId: string
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
@@ -284,15 +284,15 @@ export type ProductImageUpdateInput = {
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutProductImagesNestedInput
-  ImagePreview?: Prisma.ImageUpdateOneWithoutImagePreviewNestedInput
-  ImageContent?: Prisma.ImageUpdateOneWithoutImageContentNestedInput
+  ImagePreview?: Prisma.ImageUpdateOneRequiredWithoutImagePreviewNestedInput
+  ImageContent?: Prisma.ImageUpdateOneRequiredWithoutImageContentNestedInput
 }
 
 export type ProductImageUncheckedUpdateInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
-  imagePreviewId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageContentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePreviewId?: Prisma.StringFieldUpdateOperationsInput | string
+  imageContentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -301,8 +301,8 @@ export type ProductImageUncheckedUpdateInput = {
 export type ProductImageCreateManyInput = {
   id?: string
   productId: string
-  imagePreviewId?: string | null
-  imageContentId?: string | null
+  imagePreviewId: string
+  imageContentId: string
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
@@ -318,8 +318,8 @@ export type ProductImageUpdateManyMutationInput = {
 export type ProductImageUncheckedUpdateManyInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
-  imagePreviewId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageContentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePreviewId?: Prisma.StringFieldUpdateOperationsInput | string
+  imageContentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -500,14 +500,14 @@ export type ProductImageCreateWithoutProductInput = {
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
-  ImagePreview?: Prisma.ImageCreateNestedOneWithoutImagePreviewInput
-  ImageContent?: Prisma.ImageCreateNestedOneWithoutImageContentInput
+  ImagePreview: Prisma.ImageCreateNestedOneWithoutImagePreviewInput
+  ImageContent: Prisma.ImageCreateNestedOneWithoutImageContentInput
 }
 
 export type ProductImageUncheckedCreateWithoutProductInput = {
   id?: string
-  imagePreviewId?: string | null
-  imageContentId?: string | null
+  imagePreviewId: string
+  imageContentId: string
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
@@ -545,8 +545,8 @@ export type ProductImageScalarWhereInput = {
   NOT?: Prisma.ProductImageScalarWhereInput | Prisma.ProductImageScalarWhereInput[]
   id?: Prisma.StringFilter<"ProductImage"> | string
   productId?: Prisma.StringFilter<"ProductImage"> | string
-  imagePreviewId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
-  imageContentId?: Prisma.StringNullableFilter<"ProductImage"> | string | null
+  imagePreviewId?: Prisma.StringFilter<"ProductImage"> | string
+  imageContentId?: Prisma.StringFilter<"ProductImage"> | string
   createdAt?: Prisma.DateTimeFilter<"ProductImage"> | Date | string
   deleteAt?: Prisma.DateTimeNullableFilter<"ProductImage"> | Date | string | null
   updatedAt?: Prisma.DateTimeFilter<"ProductImage"> | Date | string
@@ -558,13 +558,13 @@ export type ProductImageCreateWithoutImagePreviewInput = {
   deleteAt?: Date | string | null
   updatedAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutProductImagesInput
-  ImageContent?: Prisma.ImageCreateNestedOneWithoutImageContentInput
+  ImageContent: Prisma.ImageCreateNestedOneWithoutImageContentInput
 }
 
 export type ProductImageUncheckedCreateWithoutImagePreviewInput = {
   id?: string
   productId: string
-  imageContentId?: string | null
+  imageContentId: string
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
@@ -586,13 +586,13 @@ export type ProductImageCreateWithoutImageContentInput = {
   deleteAt?: Date | string | null
   updatedAt?: Date | string
   product: Prisma.ProductCreateNestedOneWithoutProductImagesInput
-  ImagePreview?: Prisma.ImageCreateNestedOneWithoutImagePreviewInput
+  ImagePreview: Prisma.ImageCreateNestedOneWithoutImagePreviewInput
 }
 
 export type ProductImageUncheckedCreateWithoutImageContentInput = {
   id?: string
   productId: string
-  imagePreviewId?: string | null
+  imagePreviewId: string
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
@@ -642,8 +642,8 @@ export type ProductImageUpdateManyWithWhereWithoutImageContentInput = {
 
 export type ProductImageCreateManyProductInput = {
   id?: string
-  imagePreviewId?: string | null
-  imageContentId?: string | null
+  imagePreviewId: string
+  imageContentId: string
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
@@ -654,14 +654,14 @@ export type ProductImageUpdateWithoutProductInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  ImagePreview?: Prisma.ImageUpdateOneWithoutImagePreviewNestedInput
-  ImageContent?: Prisma.ImageUpdateOneWithoutImageContentNestedInput
+  ImagePreview?: Prisma.ImageUpdateOneRequiredWithoutImagePreviewNestedInput
+  ImageContent?: Prisma.ImageUpdateOneRequiredWithoutImageContentNestedInput
 }
 
 export type ProductImageUncheckedUpdateWithoutProductInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  imagePreviewId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageContentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePreviewId?: Prisma.StringFieldUpdateOperationsInput | string
+  imageContentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -669,8 +669,8 @@ export type ProductImageUncheckedUpdateWithoutProductInput = {
 
 export type ProductImageUncheckedUpdateManyWithoutProductInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
-  imagePreviewId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
-  imageContentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePreviewId?: Prisma.StringFieldUpdateOperationsInput | string
+  imageContentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -679,7 +679,7 @@ export type ProductImageUncheckedUpdateManyWithoutProductInput = {
 export type ProductImageCreateManyImagePreviewInput = {
   id?: string
   productId: string
-  imageContentId?: string | null
+  imageContentId: string
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
@@ -688,7 +688,7 @@ export type ProductImageCreateManyImagePreviewInput = {
 export type ProductImageCreateManyImageContentInput = {
   id?: string
   productId: string
-  imagePreviewId?: string | null
+  imagePreviewId: string
   createdAt?: Date | string
   deleteAt?: Date | string | null
   updatedAt?: Date | string
@@ -700,13 +700,13 @@ export type ProductImageUpdateWithoutImagePreviewInput = {
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutProductImagesNestedInput
-  ImageContent?: Prisma.ImageUpdateOneWithoutImageContentNestedInput
+  ImageContent?: Prisma.ImageUpdateOneRequiredWithoutImageContentNestedInput
 }
 
 export type ProductImageUncheckedUpdateWithoutImagePreviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
-  imageContentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageContentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -715,7 +715,7 @@ export type ProductImageUncheckedUpdateWithoutImagePreviewInput = {
 export type ProductImageUncheckedUpdateManyWithoutImagePreviewInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
-  imageContentId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imageContentId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -727,13 +727,13 @@ export type ProductImageUpdateWithoutImageContentInput = {
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   product?: Prisma.ProductUpdateOneRequiredWithoutProductImagesNestedInput
-  ImagePreview?: Prisma.ImageUpdateOneWithoutImagePreviewNestedInput
+  ImagePreview?: Prisma.ImageUpdateOneRequiredWithoutImagePreviewNestedInput
 }
 
 export type ProductImageUncheckedUpdateWithoutImageContentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
-  imagePreviewId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePreviewId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -742,7 +742,7 @@ export type ProductImageUncheckedUpdateWithoutImageContentInput = {
 export type ProductImageUncheckedUpdateManyWithoutImageContentInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   productId?: Prisma.StringFieldUpdateOperationsInput | string
-  imagePreviewId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  imagePreviewId?: Prisma.StringFieldUpdateOperationsInput | string
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   deleteAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
@@ -759,8 +759,8 @@ export type ProductImageSelect<ExtArgs extends runtime.Types.Extensions.Internal
   deleteAt?: boolean
   updatedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  ImagePreview?: boolean | Prisma.ProductImage$ImagePreviewArgs<ExtArgs>
-  ImageContent?: boolean | Prisma.ProductImage$ImageContentArgs<ExtArgs>
+  ImagePreview?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
+  ImageContent?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productImage"]>
 
 export type ProductImageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -772,8 +772,8 @@ export type ProductImageSelectCreateManyAndReturn<ExtArgs extends runtime.Types.
   deleteAt?: boolean
   updatedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  ImagePreview?: boolean | Prisma.ProductImage$ImagePreviewArgs<ExtArgs>
-  ImageContent?: boolean | Prisma.ProductImage$ImageContentArgs<ExtArgs>
+  ImagePreview?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
+  ImageContent?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productImage"]>
 
 export type ProductImageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -785,8 +785,8 @@ export type ProductImageSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.
   deleteAt?: boolean
   updatedAt?: boolean
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  ImagePreview?: boolean | Prisma.ProductImage$ImagePreviewArgs<ExtArgs>
-  ImageContent?: boolean | Prisma.ProductImage$ImageContentArgs<ExtArgs>
+  ImagePreview?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
+  ImageContent?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["productImage"]>
 
 export type ProductImageSelectScalar = {
@@ -802,32 +802,32 @@ export type ProductImageSelectScalar = {
 export type ProductImageOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "productId" | "imagePreviewId" | "imageContentId" | "createdAt" | "deleteAt" | "updatedAt", ExtArgs["result"]["productImage"]>
 export type ProductImageInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  ImagePreview?: boolean | Prisma.ProductImage$ImagePreviewArgs<ExtArgs>
-  ImageContent?: boolean | Prisma.ProductImage$ImageContentArgs<ExtArgs>
+  ImagePreview?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
+  ImageContent?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
 }
 export type ProductImageIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  ImagePreview?: boolean | Prisma.ProductImage$ImagePreviewArgs<ExtArgs>
-  ImageContent?: boolean | Prisma.ProductImage$ImageContentArgs<ExtArgs>
+  ImagePreview?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
+  ImageContent?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
 }
 export type ProductImageIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   product?: boolean | Prisma.ProductDefaultArgs<ExtArgs>
-  ImagePreview?: boolean | Prisma.ProductImage$ImagePreviewArgs<ExtArgs>
-  ImageContent?: boolean | Prisma.ProductImage$ImageContentArgs<ExtArgs>
+  ImagePreview?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
+  ImageContent?: boolean | Prisma.ImageDefaultArgs<ExtArgs>
 }
 
 export type $ProductImagePayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "ProductImage"
   objects: {
     product: Prisma.$ProductPayload<ExtArgs>
-    ImagePreview: Prisma.$ImagePayload<ExtArgs> | null
-    ImageContent: Prisma.$ImagePayload<ExtArgs> | null
+    ImagePreview: Prisma.$ImagePayload<ExtArgs>
+    ImageContent: Prisma.$ImagePayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
     productId: string
-    imagePreviewId: string | null
-    imageContentId: string | null
+    imagePreviewId: string
+    imageContentId: string
     createdAt: Date
     deleteAt: Date | null
     updatedAt: Date
@@ -1226,8 +1226,8 @@ readonly fields: ProductImageFieldRefs;
 export interface Prisma__ProductImageClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   product<T extends Prisma.ProductDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductDefaultArgs<ExtArgs>>): Prisma.Prisma__ProductClient<runtime.Types.Result.GetResult<Prisma.$ProductPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  ImagePreview<T extends Prisma.ProductImage$ImagePreviewArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductImage$ImagePreviewArgs<ExtArgs>>): Prisma.Prisma__ImageClient<runtime.Types.Result.GetResult<Prisma.$ImagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
-  ImageContent<T extends Prisma.ProductImage$ImageContentArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ProductImage$ImageContentArgs<ExtArgs>>): Prisma.Prisma__ImageClient<runtime.Types.Result.GetResult<Prisma.$ImagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  ImagePreview<T extends Prisma.ImageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ImageDefaultArgs<ExtArgs>>): Prisma.Prisma__ImageClient<runtime.Types.Result.GetResult<Prisma.$ImagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
+  ImageContent<T extends Prisma.ImageDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ImageDefaultArgs<ExtArgs>>): Prisma.Prisma__ImageClient<runtime.Types.Result.GetResult<Prisma.$ImagePayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1657,44 +1657,6 @@ export type ProductImageDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.
    * Limit how many ProductImages to delete.
    */
   limit?: number
-}
-
-/**
- * ProductImage.ImagePreview
- */
-export type ProductImage$ImagePreviewArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Image
-   */
-  select?: Prisma.ImageSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Image
-   */
-  omit?: Prisma.ImageOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ImageInclude<ExtArgs> | null
-  where?: Prisma.ImageWhereInput
-}
-
-/**
- * ProductImage.ImageContent
- */
-export type ProductImage$ImageContentArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  /**
-   * Select specific fields to fetch from the Image
-   */
-  select?: Prisma.ImageSelect<ExtArgs> | null
-  /**
-   * Omit specific fields from the Image
-   */
-  omit?: Prisma.ImageOmit<ExtArgs> | null
-  /**
-   * Choose, which related nodes to fetch as well
-   */
-  include?: Prisma.ImageInclude<ExtArgs> | null
-  where?: Prisma.ImageWhereInput
 }
 
 /**

@@ -257,9 +257,9 @@ export type ImageUncheckedUpdateManyInput = {
   createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
 
-export type ImageNullableScalarRelationFilter = {
-  is?: Prisma.ImageWhereInput | null
-  isNot?: Prisma.ImageWhereInput | null
+export type ImageScalarRelationFilter = {
+  is?: Prisma.ImageWhereInput
+  isNot?: Prisma.ImageWhereInput
 }
 
 export type ImageCountOrderByAggregateInput = {
@@ -292,22 +292,18 @@ export type ImageCreateNestedOneWithoutImageContentInput = {
   connect?: Prisma.ImageWhereUniqueInput
 }
 
-export type ImageUpdateOneWithoutImagePreviewNestedInput = {
+export type ImageUpdateOneRequiredWithoutImagePreviewNestedInput = {
   create?: Prisma.XOR<Prisma.ImageCreateWithoutImagePreviewInput, Prisma.ImageUncheckedCreateWithoutImagePreviewInput>
   connectOrCreate?: Prisma.ImageCreateOrConnectWithoutImagePreviewInput
   upsert?: Prisma.ImageUpsertWithoutImagePreviewInput
-  disconnect?: Prisma.ImageWhereInput | boolean
-  delete?: Prisma.ImageWhereInput | boolean
   connect?: Prisma.ImageWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ImageUpdateToOneWithWhereWithoutImagePreviewInput, Prisma.ImageUpdateWithoutImagePreviewInput>, Prisma.ImageUncheckedUpdateWithoutImagePreviewInput>
 }
 
-export type ImageUpdateOneWithoutImageContentNestedInput = {
+export type ImageUpdateOneRequiredWithoutImageContentNestedInput = {
   create?: Prisma.XOR<Prisma.ImageCreateWithoutImageContentInput, Prisma.ImageUncheckedCreateWithoutImageContentInput>
   connectOrCreate?: Prisma.ImageCreateOrConnectWithoutImageContentInput
   upsert?: Prisma.ImageUpsertWithoutImageContentInput
-  disconnect?: Prisma.ImageWhereInput | boolean
-  delete?: Prisma.ImageWhereInput | boolean
   connect?: Prisma.ImageWhereUniqueInput
   update?: Prisma.XOR<Prisma.XOR<Prisma.ImageUpdateToOneWithWhereWithoutImageContentInput, Prisma.ImageUpdateWithoutImageContentInput>, Prisma.ImageUncheckedUpdateWithoutImageContentInput>
 }

@@ -17,10 +17,10 @@ import type * as Prisma from "./prismaNamespace.js"
 
 const config: runtime.GetPrismaClientConfig = {
   "previewFeatures": [],
-  "clientVersion": "7.0.0",
-  "engineVersion": "0c19ccc313cf9911a90d99d2ac2eb0280c76c513",
+  "clientVersion": "7.1.0",
+  "engineVersion": "ab635e6b9d606fa5c8fb8b1a7f909c3c3c1c98ba",
   "activeProvider": "postgresql",
-  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  password  String\n  role      Role     @default(USER)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relasi\n  product Product[] @relation(\"UserProduct\")\n}\n\nmodel Product {\n  id          String   @id @default(uuid())\n  name        String\n  price       Int\n  description String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  // Relasi ke user (siapa yang menambahkan)\n  authorId      String?\n  author        User?          @relation(\"UserProduct\", fields: [authorId], references: [id])\n  productImages ProductImage[]\n}\n\nmodel ProductImage {\n  id             String    @id @default(uuid())\n  productId      String\n  imagePreviewId String?\n  imageContentId String?\n  createdAt      DateTime  @default(now())\n  deleteAt       DateTime?\n  updatedAt      DateTime  @updatedAt\n\n  product      Product @relation(fields: [productId], references: [id])\n  ImagePreview Image?  @relation(\"ImagePreview\", fields: [imagePreviewId], references: [id])\n  ImageContent Image?  @relation(\"ImageContent\", fields: [imageContentId], references: [id])\n}\n\nmodel Image {\n  id        String   @id @default(uuid())\n  url       String\n  createdAt DateTime @default(now())\n\n  ImagePreview ProductImage[] @relation(\"ImagePreview\")\n  ImageContent ProductImage[] @relation(\"ImageContent\")\n}\n\nenum Role {\n  ADMIN\n  USER\n}\n",
+  "inlineSchema": "// This is your Prisma schema file,\n// learn more about it in the docs: https://pris.ly/d/prisma-schema\n\n// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?\n// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init\n\ngenerator client {\n  provider = \"prisma-client\"\n  output   = \"../generated/prisma\"\n}\n\ndatasource db {\n  provider = \"postgresql\"\n}\n\nmodel User {\n  id        String   @id @default(uuid())\n  name      String\n  email     String   @unique\n  password  String\n  role      Role     @default(USER)\n  createdAt DateTime @default(now())\n  updatedAt DateTime @updatedAt\n\n  // Relasi\n  product Product[] @relation(\"UserProduct\")\n}\n\nmodel Product {\n  id          String   @id @default(uuid())\n  name        String\n  price       Int\n  description String?\n  createdAt   DateTime @default(now())\n  updatedAt   DateTime @updatedAt\n\n  // Relasi ke user (siapa yang menambahkan)\n  authorId String?\n  author   User?   @relation(\"UserProduct\", fields: [authorId], references: [id])\n\n  productImages ProductImage[]\n}\n\nmodel ProductImage {\n  id             String    @id @default(uuid())\n  productId      String\n  imagePreviewId String\n  imageContentId String\n  createdAt      DateTime  @default(now())\n  deleteAt       DateTime?\n  updatedAt      DateTime  @updatedAt\n\n  product      Product @relation(fields: [productId], references: [id])\n  ImagePreview Image   @relation(\"ImagePreview\", fields: [imagePreviewId], references: [id])\n  ImageContent Image   @relation(\"ImageContent\", fields: [imageContentId], references: [id])\n}\n\nmodel Image {\n  id        String   @id @default(uuid())\n  url       String\n  createdAt DateTime @default(now())\n\n  ImagePreview ProductImage[] @relation(\"ImagePreview\")\n  ImageContent ProductImage[] @relation(\"ImageContent\")\n}\n\nenum Role {\n  ADMIN\n  USER\n}\n",
   "runtimeDataModel": {
     "models": {},
     "enums": {},
@@ -62,7 +62,7 @@ export interface PrismaClientConstructor {
    * const users = await prisma.user.findMany()
    * ```
    * 
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+   * Read more in our [docs](https://pris.ly/d/client).
    */
 
   new <
@@ -84,7 +84,7 @@ export interface PrismaClientConstructor {
  * const users = await prisma.user.findMany()
  * ```
  * 
- * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client).
+ * Read more in our [docs](https://pris.ly/d/client).
  */
 
 export interface PrismaClient<
@@ -113,7 +113,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRaw`UPDATE User SET cool = ${true} WHERE email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -125,7 +125,7 @@ export interface PrismaClient<
    * const result = await prisma.$executeRawUnsafe('UPDATE User SET cool = $1 WHERE email = $2 ;', true, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $executeRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<number>;
 
@@ -136,7 +136,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRaw`SELECT * FROM User WHERE id = ${1} OR email = ${'user@email.com'};`
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRaw<T = unknown>(query: TemplateStringsArray | Prisma.Sql, ...values: any[]): Prisma.PrismaPromise<T>;
 
@@ -148,7 +148,7 @@ export interface PrismaClient<
    * const result = await prisma.$queryRawUnsafe('SELECT * FROM User WHERE id = $1 OR email = $2;', 1, 'user@email.com')
    * ```
    *
-   * Read more in our [docs](https://www.prisma.io/docs/reference/tools-and-interfaces/prisma-client/raw-database-access).
+   * Read more in our [docs](https://pris.ly/d/raw-queries).
    */
   $queryRawUnsafe<T = unknown>(query: string, ...values: any[]): Prisma.PrismaPromise<T>;
 
