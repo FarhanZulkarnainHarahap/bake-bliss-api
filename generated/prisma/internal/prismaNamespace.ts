@@ -388,7 +388,8 @@ export const ModelName = {
   Product: 'Product',
   Review: 'Review',
   ProductImage: 'ProductImage',
-  Image: 'Image'
+  Image: 'Image',
+  HomeReview: 'HomeReview'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +405,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "user" | "product" | "review" | "productImage" | "image"
+    modelProps: "user" | "product" | "review" | "productImage" | "image" | "homeReview"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -778,6 +779,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    HomeReview: {
+      payload: Prisma.$HomeReviewPayload<ExtArgs>
+      fields: Prisma.HomeReviewFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.HomeReviewFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.HomeReviewFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>
+        }
+        findFirst: {
+          args: Prisma.HomeReviewFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.HomeReviewFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>
+        }
+        findMany: {
+          args: Prisma.HomeReviewFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>[]
+        }
+        create: {
+          args: Prisma.HomeReviewCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>
+        }
+        createMany: {
+          args: Prisma.HomeReviewCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.HomeReviewCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>[]
+        }
+        delete: {
+          args: Prisma.HomeReviewDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>
+        }
+        update: {
+          args: Prisma.HomeReviewUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>
+        }
+        deleteMany: {
+          args: Prisma.HomeReviewDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.HomeReviewUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.HomeReviewUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>[]
+        }
+        upsert: {
+          args: Prisma.HomeReviewUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$HomeReviewPayload>
+        }
+        aggregate: {
+          args: Prisma.HomeReviewAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateHomeReview>
+        }
+        groupBy: {
+          args: Prisma.HomeReviewGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HomeReviewGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.HomeReviewCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.HomeReviewCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -879,6 +954,20 @@ export const ImageScalarFieldEnum = {
 export type ImageScalarFieldEnum = (typeof ImageScalarFieldEnum)[keyof typeof ImageScalarFieldEnum]
 
 
+export const HomeReviewScalarFieldEnum = {
+  id: 'id',
+  name: 'name',
+  text: 'text',
+  rating: 'rating',
+  isPublished: 'isPublished',
+  order: 'order',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type HomeReviewScalarFieldEnum = (typeof HomeReviewScalarFieldEnum)[keyof typeof HomeReviewScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -962,6 +1051,13 @@ export type IntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'In
  * Reference to a field of type 'Int[]'
  */
 export type ListIntFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Int[]'>
+    
+
+
+/**
+ * Reference to a field of type 'Boolean'
+ */
+export type BooleanFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Boolean'>
     
 
 
@@ -1078,6 +1174,7 @@ export type GlobalOmitConfig = {
   review?: Prisma.ReviewOmit
   productImage?: Prisma.ProductImageOmit
   image?: Prisma.ImageOmit
+  homeReview?: Prisma.HomeReviewOmit
 }
 
 /* Types for Logging */

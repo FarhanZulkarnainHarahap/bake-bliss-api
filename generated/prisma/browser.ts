@@ -42,3 +42,8 @@ export type ProductImage = Prisma.ProductImageModel
  * 
  */
 export type Image = Prisma.ImageModel
+/**
+ * Model HomeReview
+ * 
+ */
+export type HomeReview = Prisma.HomeReviewModel

@@ -84,6 +84,19 @@ model Image {
   ImageContent ProductImage[] @relation("ImageContent")
 }
 
+model HomeReview {
+  id          String   @id @default(uuid())
+  name        String
+  text        String
+  rating      Int? // optional (kalau mau bintang)
+  isPublished Boolean  @default(true)
+  order       Int      @default(0) // buat urutan tampil (kiri → kanan)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, order])
+}
+
 enum Role {
   ADMIN
   USER

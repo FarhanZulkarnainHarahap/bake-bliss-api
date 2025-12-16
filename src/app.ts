@@ -6,6 +6,7 @@ import authRouter from "./routers/auth-router.js";
 import userRouter from "./routers/user-router.js";
 import productsRouter from "./routers/product-router.js";
 import reviewRouter from "./routers/review-router.js";
+import homeReviewRouter from "./routers/home-review-router.js";
 
 const PORT: number = (process.env.PORT as unknown as number) || 8000;
 const app: Application = express();
@@ -20,6 +21,12 @@ app.use(
 app.use(express.json());
 
 app.use(cookieParser());
+
+app.use("/api/auth", authRouter);
+app.use("/api/users", userRouter);
+app.use("/api/products", productsRouter);
+app.use("/api/reviews", reviewRouter);
+app.use("/api/home-reviews", homeReviewRouter);
 
 app.get("/", async (_req: Request, res: Response) => {
   try {
@@ -180,11 +187,6 @@ SYSTEM INITIALIZED SUCCESSFULLY
     res.status(500).json({ message: "Terjadi kesalahan pada server" });
   }
 });
-
-app.use("/api/auth", authRouter);
-app.use("/api/users", userRouter);
-app.use("/api/products", productsRouter);
-app.use("/api/reviews", reviewRouter);
 
 app.listen(PORT, () => console.info(` 🚀 Server is listening on port:${PORT}`));
 export default app;
