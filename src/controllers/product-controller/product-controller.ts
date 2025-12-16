@@ -63,7 +63,7 @@ export async function createOneProduct(req: Request, res: Response) {
     console.log("Created product", product);
   } catch (error) {
     console.log(error);
-    res.status(500).json({ message: "Failed to create product" });
+    res.status(500).json({ message: "Failed to create product", error });
   }
 }
 
