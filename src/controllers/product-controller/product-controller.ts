@@ -71,69 +71,45 @@ export async function createOneProduct(req: Request, res: Response) {
       | Record<string, Express.Multer.File[]>
       | undefined;
 
-    // Validasi field wajib (description di schema kamu optional, jadi jangan dipaksa wajib)
     if (!name || !price) {
       return res
         .status(400)
         .json({ message: "Missing required fields: name, price" });
     }
 
-    if (!files || Object.keys(files).length === 0) {
-      return res.status(400).json({ message: "Images are required" });
+    if (!files) {
+      return res
+        .status(400)
+        .json({ message: "Files not found (multer not receiving uploads)" });
     }
 
-    // --- grouping per slot: images[0][preview], images[0][content], ...
-    type ImageKind = "preview" | "content";
+    // ambil file pertama (asumsi 1 preview & 1 content)
+    const previewFile = files["imagePreview"]?.[0];
+    const contentFile = files["imageContent"]?.[0];
 
-    const imageGroups: Record<string, { preview?: string; content?: string }> =
-      {};
-
-    for (const key in files) {
-      const match = key.match(/images\[(\d+)\]\[(preview|content)\]/);
-      if (!match) continue;
-
-      const index = match[1];
-      const kind = match[2] as ImageKind;
-
-      // support multiple file in one key (kalau frontend kirim banyak)
-      for (const file of files[key]) {
-        const result = await cloudinary.uploader.upload(file.path, {
-          folder: "bake-bliss",
-        });
-
-        imageGroups[index] ??= {};
-
-        // kalau user upload lebih dari 1 file untuk slot yang sama,
-        // yang terakhir akan overwrite (umumnya per slot cuma 1 file).
-        imageGroups[index][kind] = result.secure_url;
-
-        await fs.unlink(file.path);
-      }
+    if (!previewFile && !contentFile) {
+      return res
+        .status(400)
+        .json({ message: "At least one image is required (preview/content)" });
     }
 
-    // Buat payload prisma untuk productImages
-    const productImagesCreate = Object.values(imageGroups).map((img) => {
-      // Tolak slot kosong
-      if (!img.preview && !img.content) {
-        throw new Error("Image slot cannot be empty (preview/content).");
-      }
+    let previewUrl: string | undefined;
+    let contentUrl: string | undefined;
 
-      return {
-        ...(img.preview
-          ? { ImagePreview: { create: { url: img.preview } } }
-          : {}),
-        ...(img.content
-          ? { ImageContent: { create: { url: img.content } } }
-          : {}),
-      };
-    });
-
-    // Jika ternyata tidak ada key yang match regex
-    if (productImagesCreate.length === 0) {
-      return res.status(400).json({
-        message:
-          "No valid images found. Expected fields like images[0][preview] and/or images[0][content].",
+    if (previewFile) {
+      const up = await cloudinary.uploader.upload(previewFile.path, {
+        folder: "bake-bliss",
       });
+      previewUrl = up.secure_url;
+      await fs.unlink(previewFile.path);
+    }
+
+    if (contentFile) {
+      const up = await cloudinary.uploader.upload(contentFile.path, {
+        folder: "bake-bliss",
+      });
+      contentUrl = up.secure_url;
+      await fs.unlink(contentFile.path);
     }
 
     const product = await prisma.product.create({
@@ -142,34 +118,28 @@ export async function createOneProduct(req: Request, res: Response) {
         description: description ?? null,
         price: Number(price),
         productImages: {
-          create: productImagesCreate,
+          create: {
+            ...(previewUrl
+              ? { ImagePreview: { create: { url: previewUrl } } }
+              : {}),
+            ...(contentUrl
+              ? { ImageContent: { create: { url: contentUrl } } }
+              : {}),
+          },
         },
       },
       include: {
         productImages: {
-          include: {
-            ImagePreview: true,
-            ImageContent: true,
-          },
+          include: { ImagePreview: true, ImageContent: true },
         },
       },
     });
 
-    return res.status(201).json({
-      message: "Product was created",
-      data: product,
-    });
-  } catch (error: any) {
-    console.error(error);
-
-    // kalau error custom dari validasi slot
-    if (
-      typeof error?.message === "string" &&
-      error.message.includes("Image slot")
-    ) {
-      return res.status(400).json({ message: error.message });
-    }
-
+    return res
+      .status(201)
+      .json({ message: "product was Created", data: product });
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: "Failed to create product" });
   }
 }
