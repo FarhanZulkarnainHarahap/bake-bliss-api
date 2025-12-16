@@ -41,15 +41,16 @@ export async function createOneProduct(req: Request, res: Response) {
         description,
         price: Number(price),
         productImages: {
-          create: imagePreviewData.map((imagePreview, index) => ({
+          create: imagePreviewData.map((img, index) => ({
+            url: img.url,
             ImagePreview: {
               create: {
-                url: imagePreview.url,
+                url: img.url,
               },
             },
             ImageContent: {
               create: {
-                url: imageContentData[index].url,
+                url: imageContentData[index]?.url || "",
               },
             },
           })),
