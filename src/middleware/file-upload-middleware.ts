@@ -4,7 +4,7 @@ import path from "path";
 export const fileUpload = multer({
   storage: multer.diskStorage({
     destination: (req, file, cb) => {
-      cb(null, "public/assets");
+      cb(null, "/tmp"); // ✅ Vercel writable
     },
     filename: (req, file, cb) => {
       const fileName = `${Date.now()}-${Math.random()
