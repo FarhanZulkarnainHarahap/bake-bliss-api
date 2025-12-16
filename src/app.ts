@@ -24,11 +24,55 @@ app.use(cookieParser());
 app.get("/", async (_req: Request, res: Response) => {
   try {
     res.send(`
-====================================
-🚀  BAKEBLISS API
-✅  STATUS : RUNNING
-⏱️  TIME   : ${new Date().toISOString()}
-====================================
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>BakeBliss API</title>
+  <style>
+    body {
+      background: #020617;
+      color: #38bdf8;
+      font-family: monospace;
+      padding: 40px;
+    }
+    .panel {
+      border: 1px solid #38bdf8;
+      padding: 24px;
+      max-width: 480px;
+    }
+    .label {
+      color: #94a3b8;
+    }
+    .value {
+      color: #22c55e;
+    }
+  </style>
+</head>
+<body>
+  <div class="panel">
+    <pre>
+[SYSTEM STATUS]
+SERVICE : BAKEBLISS API
+STATE   : <span class="value">ONLINE</span>
+TIME    : <span id="time"></span>
+
+SYSTEM INITIALIZED SUCCESSFULLY
+    </pre>
+  </div>
+
+  <script>
+    function updateTime() {
+      const now = new Date();
+      document.getElementById("time").textContent =
+        now.toISOString();
+    }
+
+    updateTime();
+    setInterval(updateTime, 1000);
+  </script>
+</body>
+</html>
 `);
   } catch (error) {
     console.error(error);
