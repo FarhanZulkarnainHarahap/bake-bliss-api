@@ -44,21 +44,20 @@ model Product {
 }
 
 model Review {
-  id        String   @id @default(uuid())
-  message   String // ✅ isi komentar
-  rating    Int? // opsional (misal 1-5), kalau gak butuh hapus aja
-  userId    String
+  id        String @id @default(uuid())
   productId String
+
+  name    String // ✅ nama input manual (tanpa User)
+  message String
+  rating  Int? // opsional (1-5)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  // Relasi
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  // kalau mau 1 user cuma boleh 1 review per product, aktifkan ini:
-  // @@unique([userId, productId])
+  user    User?   @relation(fields: [userId], references: [id])
+  userId  String?
 
-  @@index([userId])
   @@index([productId])
 }
 
