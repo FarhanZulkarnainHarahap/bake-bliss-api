@@ -23,7 +23,7 @@ app.use(cookieParser());
 
 app.get("/", async (_req: Request, res: Response) => {
   try {
-    res.status(200).json({
+    res.send({
       success: true,
       name: "BakeBliss API",
       status: "RUNNING",
