@@ -16,12 +16,12 @@ routers
   .route("/")
   .get(getAllProducts)
   .post(
-    verifyToken,
-    roleGuard("ADMIN"),
     fileUpload.fields([
       { name: "imagePreview", maxCount: 3 },
       { name: "imageContent", maxCount: 3 },
     ]),
+    verifyToken,
+    roleGuard("ADMIN"),
     createOneProduct
   );
 
