@@ -5,7 +5,7 @@ import {
   getAllHomeReviews,
   getPublishedHomeReviews,
   updateHomeReview,
-} from "@/controllers/review-controller/home-review-controller.js";
+} from "../controllers/review-controller/home-review-controller.js";
 
 const router = express.Router();
 
