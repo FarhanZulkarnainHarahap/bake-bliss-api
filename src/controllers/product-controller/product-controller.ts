@@ -3,167 +3,63 @@ import fs from "fs/promises";
 import { prisma } from "../../configs/prisma.js";
 import { cloudinary } from "../../configs/cloudinary-config.js";
 
-// export async function createOneProduct(req: Request, res: Response) {
-//   try {
-//     const { name, description, price } = req.body;
-//     const files = req.files as {
-//       [key: string]: Express.Multer.File[];
-//     };
-
-//     if (!name || !description || !price || !files) {
-//       res.status(400).json({ message: "Missing required fields" });
-//       return;
-//     }
-
-//     const imagePreviewData: { url: string }[] = [];
-//     const imageContentData: { url: string }[] = [];
-
-//     for (const key in files) {
-//       for (const el of files[key]) {
-//         const result = await cloudinary.uploader.upload(el.path, {
-//           folder: "bake-bliss",
-//         });
-
-//         if (key === "imagePreview") {
-//           imagePreviewData.push({ url: result.secure_url });
-//         }
-
-//         if (key == "imageContent") {
-//           imageContentData.push({ url: result.secure_url });
-//         }
-//         await fs.unlink(el.path);
-//       }
-//     }
-
-//     const product = await prisma.product.create({
-//       data: {
-//         name,
-//         description,
-//         price: Number(price),
-//         productImages: {
-//           create: [
-//             ...imagePreviewData.map((image) => ({
-//               ImagePreview: { create: image },
-//             })),
-//             ...imageContentData.map((image) => ({
-//               ImageContent: { create: image },
-//             })),
-//           ],
-//         },
-//       },
-//     });
-//     if (!product) {
-//       res.status(400).json({ mesage: "ada data yang kosong" });
-//     }
-//     res.status(201).json({ message: "product was Created", data: product });
-//     console.log("Created product", product);
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).json({ message: "Failed to create product" });
-//   }
-// }
-
 export async function createOneProduct(req: Request, res: Response) {
   try {
     const { name, description, price } = req.body;
+    const files = req.files as {
+      [key: string]: Express.Multer.File[];
+    };
 
-    const files = req.files as
-      | Record<string, Express.Multer.File[]>
-      | undefined;
-
-    // description di schema optional, jadi jangan dipaksa wajib
-    if (!name || !price) {
-      return res
-        .status(400)
-        .json({ message: "Missing required fields: name, price" });
+    if (!name || !description || !price || !files) {
+      res.status(400).json({ message: "Missing required fields" });
+      return;
     }
 
-    const previewFiles = files?.imagePreview ?? [];
-    const contentFiles = files?.imageContent ?? [];
+    const imagePreviewData: { url: string }[] = [];
+    const imageContentData: { url: string }[] = [];
 
-    // kalau dua-duanya kosong → reject
-    if (previewFiles.length === 0 && contentFiles.length === 0) {
-      return res.status(400).json({
-        message: "At least one image is required (preview/content)",
-      });
-    }
-
-    // zip by index: preview[i] + content[i] -> 1 ProductImage row
-    const maxLen = Math.max(previewFiles.length, contentFiles.length);
-
-    const productImagesCreate: Array<{
-      ImagePreview?: { create: { url: string } };
-      ImageContent?: { create: { url: string } };
-    }> = [];
-
-    for (let i = 0; i < maxLen; i++) {
-      const p = previewFiles[i];
-      const c = contentFiles[i];
-
-      let previewUrl: string | undefined;
-      let contentUrl: string | undefined;
-
-      if (p) {
-        const up = await cloudinary.uploader.upload(p.path, {
+    for (const key in files) {
+      for (const el of files[key]) {
+        const result = await cloudinary.uploader.upload(el.path, {
           folder: "bake-bliss",
         });
-        previewUrl = up.secure_url;
-        await fs.unlink(p.path);
+
+        if (key === "imagePreview") {
+          imagePreviewData.push({ url: result.secure_url });
+        }
+
+        if (key == "imageContent") {
+          imageContentData.push({ url: result.secure_url });
+        }
+        await fs.unlink(el.path);
       }
-
-      if (c) {
-        const up = await cloudinary.uploader.upload(c.path, {
-          folder: "bake-bliss",
-        });
-        contentUrl = up.secure_url;
-        await fs.unlink(c.path);
-      }
-
-      // jangan pernah push row kosong
-      if (!previewUrl && !contentUrl) continue;
-
-      productImagesCreate.push({
-        ...(previewUrl
-          ? { ImagePreview: { create: { url: previewUrl } } }
-          : {}),
-        ...(contentUrl
-          ? { ImageContent: { create: { url: contentUrl } } }
-          : {}),
-      });
-    }
-
-    if (productImagesCreate.length === 0) {
-      return res.status(400).json({
-        message: "No valid images found after upload processing.",
-      });
     }
 
     const product = await prisma.product.create({
       data: {
         name,
-        description: description ?? null,
+        description,
         price: Number(price),
         productImages: {
-          create: productImagesCreate,
-        },
-      },
-      include: {
-        productImages: {
-          include: {
-            ImagePreview: true,
-            ImageContent: true,
-          },
+          create: [
+            ...imagePreviewData.map((image) => ({
+              ImagePreview: { create: image },
+            })),
+            ...imageContentData.map((image) => ({
+              ImageContent: { create: image },
+            })),
+          ],
         },
       },
     });
-
-    return res.status(201).json({
-      message: "product was Created",
-      data: product,
-    });
+    if (!product) {
+      res.status(400).json({ mesage: "ada data yang kosong" });
+    }
+    res.status(201).json({ message: "product was Created", data: product });
+    console.log("Created product", product);
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Failed to create product" });
+    console.log(error);
+    res.status(500).json({ message: "Failed to create product" });
   }
 }
 
