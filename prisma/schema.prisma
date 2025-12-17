@@ -25,6 +25,7 @@ model User {
   // Relasi
   product Product[] @relation("UserProduct")
   reviews Review[] // ✅ user punya banyak review
+  orders  Order[] // ✅ tambah ini
 }
 
 model Product {
@@ -35,12 +36,12 @@ model Product {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  // Relasi ke user (siapa yang menambahkan)
   authorId String?
   author   User?   @relation("UserProduct", fields: [authorId], references: [id])
 
   productImages ProductImage[]
-  reviews       Review[] // ✅ product punya banyak review
+  reviews       Review[]
+  orderItems    OrderItem[] // ✅ tambah ini
 }
 
 model Review {
@@ -100,4 +101,112 @@ model HomeReview {
 enum Role {
   ADMIN
   USER
+}
+
+model Order {
+  id        String  @id @default(uuid())
+  orderCode String  @unique // kode order internal (mis: BB-20251216-0001)
+  userId    String?
+  user      User?   @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  status      OrderStatus @default(PENDING)
+  totalAmount Int // total harga (rupiah)
+  currency    String      @default("IDR")
+
+  // data customer (kalau guest checkout / snapshot)
+  customerName  String?
+  customerEmail String?
+  customerPhone String?
+
+  // items
+  items   OrderItem[]
+  payment PaymentTransaction?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([status])
+  @@index([createdAt])
+}
+
+model OrderItem {
+  id        String @id @default(uuid())
+  orderId   String
+  productId String
+
+  name     String // snapshot nama product saat checkout
+  price    Int // snapshot harga saat checkout
+  qty      Int
+  subtotal Int // price * qty
+
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Restrict)
+
+  createdAt DateTime @default(now())
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model PaymentTransaction {
+  id      String @id @default(uuid())
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  provider PaymentProvider @default(MIDTRANS)
+
+  // Midtrans identifiers
+  midtransOrderId String? @unique // biasanya sama dengan orderCode (kalau kamu pakai itu sebagai order_id Midtrans)
+  transactionId   String? @unique // midtrans transaction_id
+  paymentType     String? // credit_card, gopay, bank_transfer, dll
+
+  // Snap
+  snapToken   String?
+  redirectUrl String?
+
+  // Status Midtrans
+  transactionStatus String? // pending, settlement, deny, cancel, expire, refund, chargeback, etc
+  fraudStatus       String? // accept/deny/challenge
+
+  // Amount snapshot
+  grossAmount Int?
+  currency    String? @default("IDR")
+
+  // Raw payload untuk audit/debug
+  requestPayload      Json?
+  responsePayload     Json?
+  notificationPayload Json?
+
+  status PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([provider])
+  @@index([status])
+  @@index([transactionStatus])
+}
+
+enum OrderStatus {
+  PENDING // order dibuat, belum bayar
+  PAID // sudah dibayar (settlement/capture)
+  PROCESSING // diproses (opsional)
+  SHIPPED // dikirim (opsional)
+  COMPLETED // selesai (opsional)
+  CANCELLED // dibatalkan
+  EXPIRED // expired
+}
+
+enum PaymentStatus {
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentProvider {
+  MIDTRANS
 }

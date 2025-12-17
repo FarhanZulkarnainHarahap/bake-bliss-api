@@ -56,7 +56,10 @@ export const ModelName = {
   Review: 'Review',
   ProductImage: 'ProductImage',
   Image: 'Image',
-  HomeReview: 'HomeReview'
+  HomeReview: 'HomeReview',
+  Order: 'Order',
+  OrderItem: 'OrderItem',
+  PaymentTransaction: 'PaymentTransaction'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -151,12 +154,75 @@ export const HomeReviewScalarFieldEnum = {
 export type HomeReviewScalarFieldEnum = (typeof HomeReviewScalarFieldEnum)[keyof typeof HomeReviewScalarFieldEnum]
 
 
+export const OrderScalarFieldEnum = {
+  id: 'id',
+  orderCode: 'orderCode',
+  userId: 'userId',
+  status: 'status',
+  totalAmount: 'totalAmount',
+  currency: 'currency',
+  customerName: 'customerName',
+  customerEmail: 'customerEmail',
+  customerPhone: 'customerPhone',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type OrderScalarFieldEnum = (typeof OrderScalarFieldEnum)[keyof typeof OrderScalarFieldEnum]
+
+
+export const OrderItemScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  productId: 'productId',
+  name: 'name',
+  price: 'price',
+  qty: 'qty',
+  subtotal: 'subtotal',
+  createdAt: 'createdAt'
+} as const
+
+export type OrderItemScalarFieldEnum = (typeof OrderItemScalarFieldEnum)[keyof typeof OrderItemScalarFieldEnum]
+
+
+export const PaymentTransactionScalarFieldEnum = {
+  id: 'id',
+  orderId: 'orderId',
+  provider: 'provider',
+  midtransOrderId: 'midtransOrderId',
+  transactionId: 'transactionId',
+  paymentType: 'paymentType',
+  snapToken: 'snapToken',
+  redirectUrl: 'redirectUrl',
+  transactionStatus: 'transactionStatus',
+  fraudStatus: 'fraudStatus',
+  grossAmount: 'grossAmount',
+  currency: 'currency',
+  requestPayload: 'requestPayload',
+  responsePayload: 'responsePayload',
+  notificationPayload: 'notificationPayload',
+  status: 'status',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type PaymentTransactionScalarFieldEnum = (typeof PaymentTransactionScalarFieldEnum)[keyof typeof PaymentTransactionScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
 } as const
 
 export type SortOrder = (typeof SortOrder)[keyof typeof SortOrder]
+
+
+export const NullableJsonNullValueInput = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull'
+} as const
+
+export type NullableJsonNullValueInput = (typeof NullableJsonNullValueInput)[keyof typeof NullableJsonNullValueInput]
 
 
 export const QueryMode = {
@@ -173,4 +239,13 @@ export const NullsOrder = {
 } as const
 
 export type NullsOrder = (typeof NullsOrder)[keyof typeof NullsOrder]
+
+
+export const JsonNullValueFilter = {
+  DbNull: 'DbNull',
+  JsonNull: 'JsonNull',
+  AnyNull: 'AnyNull'
+} as const
+
+export type JsonNullValueFilter = (typeof JsonNullValueFilter)[keyof typeof JsonNullValueFilter]
 

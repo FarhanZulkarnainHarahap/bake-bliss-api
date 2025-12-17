@@ -7,6 +7,8 @@ import userRouter from "./routers/user-router.js";
 import productsRouter from "./routers/product-router.js";
 import reviewRouter from "./routers/review-router.js";
 import homeReviewRouter from "./routers/home-review-router.js";
+import orderRouter from "./routers/order.route.js";
+import midtransRouter from "./routers/midtrans.route.js";
 
 const PORT: number = (process.env.PORT as unknown as number) || 8000;
 const app: Application = express();
@@ -27,6 +29,10 @@ app.use("/api/users", userRouter);
 app.use("/api/products", productsRouter);
 app.use("/api/reviews", reviewRouter);
 app.use("/api/home-reviews", homeReviewRouter);
+
+// Routes
+app.use("/api/orders", orderRouter);
+app.use("/api/midtrans", midtransRouter);
 
 app.get("/", async (_req: Request, res: Response) => {
   try {
