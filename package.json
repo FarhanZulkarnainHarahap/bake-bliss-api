@@ -37,7 +37,9 @@
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
     "midtrans-client": "^1.4.3",
+    "midtrans-node-client": "^0.0.6",
     "multer": "^2.0.2",
-    "pg": "^8.16.3"
+    "pg": "^8.16.3",
+    "uuid": "^13.0.0"
   }
 }

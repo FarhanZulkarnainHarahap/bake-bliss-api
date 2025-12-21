@@ -70,17 +70,7 @@ export type Image = Prisma.ImageModel
  */
 export type HomeReview = Prisma.HomeReviewModel
 /**
- * Model Order
+ * Model Transaction
  * 
  */
-export type Order = Prisma.OrderModel
-/**
- * Model OrderItem
- * 
- */
-export type OrderItem = Prisma.OrderItemModel
-/**
- * Model PaymentTransaction
- * 
- */
-export type PaymentTransaction = Prisma.PaymentTransactionModel
+export type Transaction = Prisma.TransactionModel

@@ -17,33 +17,12 @@ export const Role = {
 export type Role = (typeof Role)[keyof typeof Role]
 
 
-export const OrderStatus = {
+export const TransactionStatus = {
   PENDING: 'PENDING',
   PAID: 'PAID',
-  PROCESSING: 'PROCESSING',
-  SHIPPED: 'SHIPPED',
-  COMPLETED: 'COMPLETED',
-  CANCELLED: 'CANCELLED',
-  EXPIRED: 'EXPIRED'
-} as const
-
-export type OrderStatus = (typeof OrderStatus)[keyof typeof OrderStatus]
-
-
-export const PaymentStatus = {
-  PENDING: 'PENDING',
-  SUCCESS: 'SUCCESS',
   FAILED: 'FAILED',
   EXPIRED: 'EXPIRED',
-  CANCELLED: 'CANCELLED',
-  REFUNDED: 'REFUNDED'
+  CANCELLED: 'CANCELLED'
 } as const
 
-export type PaymentStatus = (typeof PaymentStatus)[keyof typeof PaymentStatus]
-
-
-export const PaymentProvider = {
-  MIDTRANS: 'MIDTRANS'
-} as const
-
-export type PaymentProvider = (typeof PaymentProvider)[keyof typeof PaymentProvider]
+export type TransactionStatus = (typeof TransactionStatus)[keyof typeof TransactionStatus]
