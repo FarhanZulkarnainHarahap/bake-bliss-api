@@ -75,11 +75,11 @@ export async function createTransaction(req: Request, res: Response) {
 
 export async function getOrderByCode(req: Request, res: Response) {
   try {
-    const { orderCode } = req.params;
+    const { orderid } = req.params;
 
     const transaction = await prisma.transaction.findUnique({
       where: {
-        id: orderCode, // orderCode = transaction.id
+        id: orderid, // orderid = transaction.id
       },
       include: {
         Product: {
